@@ -65,7 +65,7 @@ public class BombermanGame extends Application {
         };
         timer.start();
 
-        createMapFromFile();
+//        createMapFromFile();
 //        createMap();
 
         Entity bomberman = new Bomber(1, 1, Sprite.player_right.getFxImage());
