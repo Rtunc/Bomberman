@@ -1,16 +1,22 @@
 package uet.oop.bomberman;
 
+
+
 import java.lang.*;
 import java.io.*;
-
+import java.awt.*;
 import com.sun.rowset.internal.Row;
 import com.sun.xml.internal.bind.v2.runtime.output.StAXExStreamWriterOutput;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.event.EventHandler;
+
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import sun.text.normalizer.UCharacter;
 import uet.oop.bomberman.entities.*;
@@ -23,7 +29,7 @@ import java.util.List;
 
 
 public class BombermanGame extends Application {
-    public static char mapMatrix[][];
+    private static char[][] mapMatrix;
     public static int WIDTH;
     public static int HEIGHT;
 
@@ -40,7 +46,10 @@ public class BombermanGame extends Application {
 
     @Override
     public void start(Stage stage) {
+
         createMapFromFile();
+        Bomber bomberman = new Bomber(1, 1, Sprite.player_down.getFxImage());
+        entities.add(bomberman);
         // Tao Canvas
         canvas = new Canvas(Sprite.SCALED_SIZE * WIDTH, Sprite.SCALED_SIZE * HEIGHT);
         gc = canvas.getGraphicsContext2D();
@@ -52,6 +61,66 @@ public class BombermanGame extends Application {
         // Tao scene
         Scene scene = new Scene(root);
 
+        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                switch (event.getCode()) {
+                    case UP:   bomberman.goNorth = true; break;
+                    case DOWN:  bomberman.goSouth = true; break;
+                    case LEFT:  bomberman.goWest  = true; break;
+                    case RIGHT: bomberman.goEast  = true; break;
+
+                }
+            }
+        });
+
+        scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                switch (event.getCode()) {
+                    case UP:   bomberman.goNorth = false; break;
+                    case DOWN:  bomberman.goSouth = false; break;
+                    case LEFT:  bomberman.goWest  = false; break;
+                    case RIGHT: bomberman.goEast  = false; break;
+
+                }
+            }
+        });
+//        scene.setOnKeyPressed(KeyEvent -> {
+//            KeyCode keyCode = KeyEvent.getCode();
+//            switch (keyCode) {
+//                case KP_RIGHT: {
+//                    bomberman.status = Bomber.StatusDirection.RIGHT;
+//                    System.out.println(bomberman.status);
+//                    break;
+//                }
+//                case LEFT: {
+//                    bomberman.status = Bomber.StatusDirection.LEFT;
+//                    break;
+//                }
+//
+//                case UP: {
+//                    bomberman.status = Bomber.StatusDirection.UP;
+//                    break;
+//                }
+//
+//                case DOWN: {
+//                    bomberman.status = Bomber.StatusDirection.DOWN;
+//                    break;
+//                }
+//                case SPACE: {
+//                    bomberman.status = Bomber.StatusDirection.STOP;
+//                    System.out.println(bomberman.status);
+//                    break;
+//                }
+//
+//
+//
+//            }
+//        });
+//        Scene.setOnKeyPressed(event -> {
+//        KeyCode keycode = keyEvent.getCode();
+//        })
         // Them scene vao stage
         stage.setScene(scene);
         stage.show();
@@ -64,31 +133,8 @@ public class BombermanGame extends Application {
             }
         };
         timer.start();
-
-//        createMapFromFile();
-//        createMap();
-
-        Entity bomberman = new Bomber(1, 1, Sprite.player_right.getFxImage());
-        entities.add(bomberman);
+        createEntities();
     }
-
-//    public void createMap() {
-//
-//        for (int i = 0; i < WIDTH; i++) {
-//            for (int j = 0; j < HEIGHT; j++) {
-//
-//                Entity object;
-//                if (j == 0 || j == HEIGHT - 1 || i == 0 || i == WIDTH - 1) {
-//                    object = new Wall(i, j, Sprite.wall.getFxImage());
-//                } else {
-//                    object = new Grass(i, j, Sprite.grass.getFxImage());
-//                }
-//                stillObjects.add(object);
-//
-//
-//            }
-//        }
-//    }
 
     public void createMapFromFile() {
         BufferedReader bufferedReader = null;
@@ -117,55 +163,77 @@ public class BombermanGame extends Application {
                 for (int j = 0; j < column; j++) {
                     char x = rowText.charAt(j);
                     mapMatrix[i][j] = x;
-                    switch (x) {
-                        case '#': {
-                            Wall object = new Wall(j, i, Sprite.wall.getFxImage());
-                            stillObjects.add(object);
-                            break;
-
-                        }
-                        case '*': {
-                            Brick object = new Brick(j,i,Sprite.brick.getFxImage());
-                            stillObjects.add(object);
-                            break;
-
-                        }
-                        case '1': {
-                            Entity object = new Balloon(j,i,Sprite.balloom_left2.getFxImage());
-                            stillObjects.add(object);
-                            break;
-                        }
-                        case '2': {
-                            Entity object = new Oneal(j,i,Sprite.oneal_dead.getFxImage());
-                            stillObjects.add(object);
-                            break;
-                        }
-
-                        default: {
-                            Entity object = new Grass(j, i, Sprite.grass.getFxImage());
-                            stillObjects.add(object);
-                            break;
-
-                        }
                 }
-
             }
-        }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void update() {
-        entities.forEach(Entity::update);
+    public void createEntities() {
+        for (int i = 0; i < HEIGHT; i++) {
 
-        stillObjects.forEach(Entity::update);
+            for (int j = 0; j < WIDTH; j++) {
+                char chatactor = mapMatrix[i][j];
+                switch (chatactor) {
+                    case '#': {
+                        Wall object = new Wall(j, i, Sprite.wall.getFxImage());
+                        stillObjects.add(object);
+                        break;
 
+                    }
+                    case '*': {
+                        Brick object = new Brick(j, i, Sprite.brick.getFxImage());
+                        stillObjects.add(object);
+                        break;
+
+                    }
+                    case '1': {
+                        Entity object = new Grass(j, i, Sprite.grass.getFxImage());
+                        stillObjects.add(object);
+                        Entity object1 = new Balloon(j, i, Sprite.balloom_left2.getFxImage());
+                        entities.add(object);
+                        break;
+                    }
+                    case '2': {
+                        Entity object = new Grass(j, i, Sprite.grass.getFxImage());
+                        stillObjects.add(object);
+                        Entity object2 = new Oneal(j, i, Sprite.oneal_dead.getFxImage());
+                        entities.add(object2);
+                        break;
+                    }
+//
+
+
+                    default: {
+                        Entity object = new Grass(j, i, Sprite.grass.getFxImage());
+                        stillObjects.add(object);
+                        break;
+
+                    }
+                }
+
+            }
+        }
+    }
+        public void update () {
+            entities.forEach(Entity::update);
+
+            stillObjects.forEach(Entity::update);
+
+        }
+        public void checkCollision () {
+            for (int i = 0; i < stillObjects.size(); i++) {
+                if (stillObjects.get(i) instanceof Wall) {
+
+                }
+            }
+        }
+
+        public void render () {
+            gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+            stillObjects.forEach(g -> g.render(gc));
+            entities.forEach(g -> g.render(gc));
+        }
     }
 
-    public void render() {
-        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        stillObjects.forEach(g -> g.render(gc));
-        entities.forEach(g -> g.render(gc));
-    }
-}
