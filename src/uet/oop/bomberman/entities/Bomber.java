@@ -5,6 +5,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import uet.oop.bomberman.BombermanGame;
 
 public class Bomber extends movingEntities {
     private double _speed=5;
@@ -26,11 +27,10 @@ public class Bomber extends movingEntities {
         // TODO: xử lý nhận tín hiệu điều khiển hướng đi từ _input và gọi move() để thực hiện di chuyển
         // TODO: nhớ cập nhật lại giá trị cờ _moving khi thay đổi trạng thái di chuyển
         int xa = 0, ya = 0;
-        if (goNorth) ya -= 1;
-        if (goSouth) ya += 1;
-        if (goEast)  xa += 1;
-        if (goWest)  xa -= 1;
-            System.out.println(xa);
+        if (goNorth && BombermanGame.isFree(x, y-1)) ya -= 1;
+        if (goSouth && BombermanGame.isFree(x, y+1)) ya += 1;
+        if (goEast && BombermanGame.isFree(x+1, y))  xa += 1;
+        if (goWest && BombermanGame.isFree(x-1, y))  xa -= 1;
         if(xa != 0 || ya != 0)  {
             move(xa, ya);
 

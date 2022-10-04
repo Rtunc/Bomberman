@@ -13,4 +13,7 @@ public abstract class movingEntities extends Entity {
     protected void animate() {
         if(frame < MAX_ANIMATE) frame++; else frame = 0;
     }
+    public void move(){
+
+    }
 }

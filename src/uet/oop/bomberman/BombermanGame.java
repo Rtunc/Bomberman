@@ -136,6 +136,26 @@ public class BombermanGame extends Application {
         createEntities();
     }
 
+    public static boolean isFree(int nextX, int nextY) {
+        int size = Sprite.SCALED_SIZE;
+        int nextX_1 = nextX / size;
+        int nextY_1 = nextY / size;
+
+        int nextX_2 = (nextX + size - 2) / size;
+        int nextY_2 = nextY / size;
+
+        int nextX_3 = nextX / size;
+        int nextY_3 = (nextY + size - 2) / size;
+
+        int nextX_4 = (nextX + size - 2) / size;
+        int nextY_4 = (nextY + size - 2) / size;
+        System.out.println(nextX+" "+nextY);
+        return !((mapMatrix[nextY_1][nextX_1] == '*' || mapMatrix[nextY_1][nextX_1] == '#') ||
+                (mapMatrix[nextY_2][nextX_2] == '*' || mapMatrix[nextY_2][nextX_2] == '#') ||
+                (mapMatrix[nextY_3][nextX_3] == '*' || mapMatrix[nextY_3][nextX_3] == '#') ||
+                (mapMatrix[nextY_4][nextX_4] == '*' || mapMatrix[nextY_4][nextX_4] == '#'));
+
+    }
     public void createMapFromFile() {
         BufferedReader bufferedReader = null;
 
