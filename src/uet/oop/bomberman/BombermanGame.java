@@ -33,6 +33,7 @@ public class BombermanGame extends Application {
     public static int WIDTH;
     public static int HEIGHT;
 
+    public static double fps;
     private GraphicsContext gc;
     private Canvas canvas;
     private List<Entity> entities = new ArrayList<>();
@@ -48,7 +49,7 @@ public class BombermanGame extends Application {
     public void start(Stage stage) {
 
         createMapFromFile();
-        Bomber bomberman = new Bomber(1, 1, Sprite.player_down.getFxImage());
+        Bomber bomberman = new Bomber(1, 1);
         entities.add(bomberman);
         // Tao Canvas
         canvas = new Canvas(Sprite.SCALED_SIZE * WIDTH, Sprite.SCALED_SIZE * HEIGHT);
@@ -126,10 +127,16 @@ public class BombermanGame extends Application {
         stage.show();
 
         AnimationTimer timer = new AnimationTimer() {
+            long lastUpdate = 0;
+
             @Override
             public void handle(long l) {
                 render();
                 update();
+                if (lastUpdate > 0) {
+                    fps = (double) 1 / ((l - lastUpdate) * 1e-9);
+                }
+                lastUpdate = l;
             }
         };
         timer.start();
