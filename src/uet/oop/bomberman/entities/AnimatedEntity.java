@@ -80,12 +80,12 @@ public abstract class AnimatedEntity extends Entity {
 
     /**
      * render override lại để render hiệu ứng
-     * với thời lượng = fps / frame / 2 (vì không / 2 hiệu ứng bị chậm, có thể thay đổi tùy thích)
+     * với thời lượng = fps / frame / 3 (vì không / 3 hiệu ứng bị chậm, có thể thay đổi tùy thích)
      * @param gc GC
      */
     @Override
     public void render(GraphicsContext gc) {
-        if (this.currentFrameCount < BombermanGame.fps / this.MAX_ANIMATE / 2) {
+        if (this.currentFrameCount < BombermanGame.fps / this.MAX_ANIMATE / 3) {
             this.currentFrameCount++;
         } else {
             this.currentFrameCount = 0;

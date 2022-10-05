@@ -1,6 +1,5 @@
 package uet.oop.bomberman.entities;
 
-import com.sun.javafx.collections.MappingChange;
 import javafx.scene.image.Image;
 
 import java.util.ArrayList;
@@ -18,6 +17,8 @@ public abstract class MovingEntity extends AnimatedEntity {
      */
     protected Map<MovingDirection, List<Image>> frameSet;
 
+    private MovingDirection currentDirection;
+
     /**
      * Khởi tạo hình ảnh mặc định không hiệu ứng
      * Muốn thay đổi vị trí sau khi di chuyển, dùng setX, setY
@@ -29,10 +30,10 @@ public abstract class MovingEntity extends AnimatedEntity {
     public MovingEntity(int xUnit, int yUnit, Image img) {
         super(xUnit, yUnit, img);
         frameSet = new HashMap<>();
-        frameSet.put(MovingDirection.UP, new ArrayList<>());
-        frameSet.put(MovingDirection.DOWN, new ArrayList<>());
-        frameSet.put(MovingDirection.LEFT, new ArrayList<>());
-        frameSet.put(MovingDirection.RIGHT, new ArrayList<>());
+        for (MovingDirection direction :
+                MovingDirection.values()) {
+            frameSet.put(direction, new ArrayList<>());
+        }
     }
 
     /**
@@ -45,13 +46,23 @@ public abstract class MovingEntity extends AnimatedEntity {
         frameSet.get(direction).add(img);
     }
 
+    public MovingDirection getCurrentDirection() {
+        return currentDirection;
+    }
+
     /**
      * Nếu nhân vật có đổi hướng di chuyển, gọi hàm này để thay đổi tập hiệu ứng.
      *
      * @param direction hướng đi mới.
      */
-    public void switchState(MovingDirection direction) {
-        super.setFrameSet(frameSet.get(direction));
+    public void setCurrentDirection(MovingDirection direction) {
+        this.currentDirection = direction;
+        this.switchState();
+    }
+
+    private void switchState() {
+        super.setFrameSet(frameSet.get(currentDirection));
+
     }
 
     /**
@@ -61,6 +72,7 @@ public abstract class MovingEntity extends AnimatedEntity {
         UP,
         DOWN,
         LEFT,
-        RIGHT
+        RIGHT,
+        STAND,
     }
 }

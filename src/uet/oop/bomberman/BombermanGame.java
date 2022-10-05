@@ -1,48 +1,60 @@
 package uet.oop.bomberman;
 
 
-
-import java.lang.*;
-import java.io.*;
-import java.awt.*;
-import com.sun.rowset.internal.Row;
-import com.sun.xml.internal.bind.v2.runtime.output.StAXExStreamWriterOutput;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
-
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-import sun.text.normalizer.UCharacter;
 import uet.oop.bomberman.entities.*;
 import uet.oop.bomberman.graphics.Sprite;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class BombermanGame extends Application {
-    private static char[][] mapMatrix;
     public static int WIDTH;
     public static int HEIGHT;
-
     public static double fps;
+    private static char[][] mapMatrix;
     private GraphicsContext gc;
     private Canvas canvas;
-    private List<Entity> entities = new ArrayList<>();
-    private List<Entity> stillObjects = new ArrayList<>();
+    private final List<Entity> entities = new ArrayList<>();
+    private final List<Entity> stillObjects = new ArrayList<>();
 
 
     public static void main(String[] args) {
 
         Application.launch(BombermanGame.class);
+    }
+
+    public static boolean isFree(int nextX, int nextY) {
+        int size = Sprite.SCALED_SIZE;
+        int nextX_1 = nextX / size;
+        int nextY_1 = nextY / size;
+
+        int nextX_2 = (nextX + size - 2) / size;
+        int nextY_2 = nextY / size;
+
+        int nextX_3 = nextX / size;
+        int nextY_3 = (nextY + size - 2) / size;
+
+        int nextX_4 = (nextX + size - 2) / size;
+        int nextY_4 = (nextY + size - 2) / size;
+        System.out.println(nextX + " " + nextY);
+        return !((mapMatrix[nextY_1][nextX_1] == '*' || mapMatrix[nextY_1][nextX_1] == '#') ||
+                (mapMatrix[nextY_2][nextX_2] == '*' || mapMatrix[nextY_2][nextX_2] == '#') ||
+                (mapMatrix[nextY_3][nextX_3] == '*' || mapMatrix[nextY_3][nextX_3] == '#') ||
+                (mapMatrix[nextY_4][nextX_4] == '*' || mapMatrix[nextY_4][nextX_4] == '#'));
+
     }
 
     @Override
@@ -66,10 +78,22 @@ public class BombermanGame extends Application {
             @Override
             public void handle(KeyEvent event) {
                 switch (event.getCode()) {
-                    case UP:   bomberman.goNorth = true; break;
-                    case DOWN:  bomberman.goSouth = true; break;
-                    case LEFT:  bomberman.goWest  = true; break;
-                    case RIGHT: bomberman.goEast  = true; break;
+                    case UP:
+                        bomberman.setInputDirection(MovingEntity.MovingDirection.UP);
+                        bomberman.increaseVelocity();
+                        break;
+                    case DOWN:
+                        bomberman.setInputDirection(MovingEntity.MovingDirection.DOWN);
+                        bomberman.increaseVelocity();
+                        break;
+                    case LEFT:
+                        bomberman.setInputDirection(MovingEntity.MovingDirection.LEFT);
+                        bomberman.increaseVelocity();
+                        break;
+                    case RIGHT:
+                        bomberman.setInputDirection(MovingEntity.MovingDirection.RIGHT);
+                        bomberman.increaseVelocity();
+                        break;
 
                 }
             }
@@ -79,10 +103,13 @@ public class BombermanGame extends Application {
             @Override
             public void handle(KeyEvent event) {
                 switch (event.getCode()) {
-                    case UP:   bomberman.goNorth = false; break;
-                    case DOWN:  bomberman.goSouth = false; break;
-                    case LEFT:  bomberman.goWest  = false; break;
-                    case RIGHT: bomberman.goEast  = false; break;
+                    case UP:
+                    case RIGHT:
+                    case DOWN:
+                    case LEFT:
+                        bomberman.setInputDirection(null);
+                        bomberman.resetVelocity();
+                        break;
 
                 }
             }
@@ -143,26 +170,6 @@ public class BombermanGame extends Application {
         createEntities();
     }
 
-    public static boolean isFree(int nextX, int nextY) {
-        int size = Sprite.SCALED_SIZE;
-        int nextX_1 = nextX / size;
-        int nextY_1 = nextY / size;
-
-        int nextX_2 = (nextX + size - 2) / size;
-        int nextY_2 = nextY / size;
-
-        int nextX_3 = nextX / size;
-        int nextY_3 = (nextY + size - 2) / size;
-
-        int nextX_4 = (nextX + size - 2) / size;
-        int nextY_4 = (nextY + size - 2) / size;
-        System.out.println(nextX+" "+nextY);
-        return !((mapMatrix[nextY_1][nextX_1] == '*' || mapMatrix[nextY_1][nextX_1] == '#') ||
-                (mapMatrix[nextY_2][nextX_2] == '*' || mapMatrix[nextY_2][nextX_2] == '#') ||
-                (mapMatrix[nextY_3][nextX_3] == '*' || mapMatrix[nextY_3][nextX_3] == '#') ||
-                (mapMatrix[nextY_4][nextX_4] == '*' || mapMatrix[nextY_4][nextX_4] == '#'));
-
-    }
     public void createMapFromFile() {
         BufferedReader bufferedReader = null;
 
@@ -180,9 +187,9 @@ public class BombermanGame extends Application {
             level = Integer.parseInt(tokens[0]);
             row = Integer.parseInt(tokens[1]);
             column = Integer.parseInt(tokens[2]);
-            this.WIDTH = column;
+            WIDTH = column;
             System.out.println(WIDTH);
-            this.HEIGHT = row;
+            HEIGHT = row;
             mapMatrix = new char[row][column];
             for (int i = 0; i < row; i++) {
                 String rowText = bufferedReader.readLine();
@@ -243,24 +250,26 @@ public class BombermanGame extends Application {
             }
         }
     }
-        public void update () {
-            entities.forEach(Entity::update);
 
-            stillObjects.forEach(Entity::update);
+    public void update() {
+        entities.forEach(Entity::update);
 
-        }
-        public void checkCollision () {
-            for (int i = 0; i < stillObjects.size(); i++) {
-                if (stillObjects.get(i) instanceof Wall) {
+        stillObjects.forEach(Entity::update);
 
-                }
+    }
+
+    public void checkCollision() {
+        for (int i = 0; i < stillObjects.size(); i++) {
+            if (stillObjects.get(i) instanceof Wall) {
+
             }
         }
-
-        public void render () {
-            gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-            stillObjects.forEach(g -> g.render(gc));
-            entities.forEach(g -> g.render(gc));
-        }
     }
+
+    public void render() {
+        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        stillObjects.forEach(g -> g.render(gc));
+        entities.forEach(g -> g.render(gc));
+    }
+}
 
