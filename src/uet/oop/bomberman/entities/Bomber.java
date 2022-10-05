@@ -1,8 +1,11 @@
 package uet.oop.bomberman.entities;
 
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.graphics.Sprite;
+
+import java.awt.font.GraphicAttribute;
 
 public class Bomber extends SetAnimatedEntity {
 
@@ -15,7 +18,7 @@ public class Bomber extends SetAnimatedEntity {
     private int numberOfBombs = 1;
     private int velocity = 1;
 
-    private int maxVelocity = 1;
+    private int maxVelocity = 3;
     /**
      * Khởi tạo Bomber với tập hình ảnh.
      *
@@ -124,6 +127,7 @@ public class Bomber extends SetAnimatedEntity {
 
     public void move(double xa, double ya) {
 //        TODO: xử lý input cho việc nhân vật chen vào giữa đơn giản hơn
+//        int size = Sprite.SCALED_SIZE;
         y += ya;
 //        if ((int) y % Sprite.SCALED_SIZE <= (Sprite.SCALED_SIZE / Sprite.DEFAULT_SIZE)
 //        || (int) y % Sprite.SCALED_SIZE >= (Sprite.DEFAULT_SIZE - 1) *(Sprite.SCALED_SIZE / Sprite.DEFAULT_SIZE) ) {
@@ -142,6 +146,36 @@ public class Bomber extends SetAnimatedEntity {
 //                x += (Sprite.SCALED_SIZE / Sprite.DEFAULT_SIZE);
 //            }
 //        }
+//        if (x % size < size - (x % size)) {
+//            x -= x % size;
+//        } else {
+//            x += size - (x % size);
+//        }
+//        if (x % size < size - (x % size)) {
+//            x -= x % size;
+//        } else {
+//            x += size - (x % size);
+//        }
+    }
+
+    @Override
+    public void render(GraphicsContext gc) {
+        int size = Sprite.SCALED_SIZE;
+        int defaultSize = Sprite.DEFAULT_SIZE;
+        int tempX = x, tempY = y;
+//        if (x % size < size - (x % size) && x % size <= 2 * (size / defaultSize)) {
+//            x -= x % size;
+//        } else if (size - (x % size) <= 2 * (size / defaultSize)) {
+//            x += size - (x % size);
+//        }
+//        if (y % size < size - (y % size) && y % size <= 2 * (size / defaultSize)) {
+//            y -= y % size;
+//        } else if (size - (y % size) <= 2 * (size / defaultSize)) {
+//            y += size - (y % size);
+//        }
+        super.render(gc);
+        x = tempX;
+        y = tempY;
     }
 
     /**
@@ -152,9 +186,22 @@ public class Bomber extends SetAnimatedEntity {
      * @return có di chuyển được không
      */
     public boolean canMove(int nextX, int nextY) {
+        int size = Sprite.SCALED_SIZE;
+        int defaultSize = Sprite.DEFAULT_SIZE;
+        if (nextX % size < size - (nextX % size) && nextX % size <= 2 * (size / defaultSize)) {
+            nextX -= nextX % size;
+        } else if (size - (nextX % size) <= 2 * (size / defaultSize)) {
+            nextX += size - (nextX % size);
+        }
+        if (nextY % size < size - (nextY % size) && nextY % size <= 2 * (size / defaultSize)) {
+            nextY -= nextY % size;
+        } else if (size - (nextX % size) <= 2 * (size / defaultSize)) {
+            nextY += size - (nextY % size);
+        }
         boolean result = BombermanGame.isFree(nextX, nextY);
         return result;
     }
+
 
     @Override
     public void update() {
