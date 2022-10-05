@@ -1,6 +1,5 @@
 package uet.oop.bomberman.entities;
 
-import com.sun.javafx.collections.MappingChange;
 import javafx.scene.image.Image;
 
 import java.util.ArrayList;
@@ -12,11 +11,13 @@ import java.util.Map;
  * MovingEntity kế thừa Animate.
  * Để giúp những nhân vật chuyển động có hướng cụ thể.
  */
-public abstract class MovingEntity extends AnimatedEntity {
+public abstract class SetAnimatedEntity extends AnimatedEntity {
     /**
      * Danh sách các hiệu ứng tùy thuộc vào hướng đi
      */
-    protected Map<MovingDirection, List<Image>> frameSet;
+    protected Map<AnimateAction, List<Image>> frameSet;
+
+    private AnimateAction currentState;
 
     /**
      * Khởi tạo hình ảnh mặc định không hiệu ứng
@@ -26,41 +27,37 @@ public abstract class MovingEntity extends AnimatedEntity {
      * @param yUnit Vị trí y.
      * @param img   hình ảnh không hiệu ứng.
      */
-    public MovingEntity(int xUnit, int yUnit, Image img) {
+    public SetAnimatedEntity(int xUnit, int yUnit, Image img) {
         super(xUnit, yUnit, img);
         frameSet = new HashMap<>();
-        frameSet.put(MovingDirection.UP, new ArrayList<>());
-        frameSet.put(MovingDirection.DOWN, new ArrayList<>());
-        frameSet.put(MovingDirection.LEFT, new ArrayList<>());
-        frameSet.put(MovingDirection.RIGHT, new ArrayList<>());
     }
 
     /**
      * Thêm frame tùy vào hướng di chuyển
      *
      * @param img       hình ảnh thêm.
-     * @param direction hướng di chuyển
+     * @param state hướng di chuyển
      */
-    public void addFrame(Image img, MovingDirection direction) {
-        frameSet.get(direction).add(img);
+    public void addFrame(Image img, AnimateAction state) {
+        frameSet.computeIfAbsent(state, k -> new ArrayList<>());
+        frameSet.get(state).add(img);
+    }
+
+    public AnimateAction getCurrentState() {
+        return currentState;
     }
 
     /**
      * Nếu nhân vật có đổi hướng di chuyển, gọi hàm này để thay đổi tập hiệu ứng.
      *
-     * @param direction hướng đi mới.
+     * @param state hướng đi mới.
      */
-    public void switchState(MovingDirection direction) {
-        super.setFrameSet(frameSet.get(direction));
+    public void setCurrentState(AnimateAction state) {
+        this.currentState = state;
+        this.switchState();
     }
 
-    /**
-     * Các hướng di chuyển nhân vật.
-     */
-    public enum MovingDirection {
-        UP,
-        DOWN,
-        LEFT,
-        RIGHT
+    private void switchState() {
+        super.setFrameSet(frameSet.get(currentState));
     }
 }
