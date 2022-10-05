@@ -79,19 +79,19 @@ public class BombermanGame extends Application {
             public void handle(KeyEvent event) {
                 switch (event.getCode()) {
                     case UP:
-                        bomberman.setInputDirection(MovingEntity.MovingDirection.UP);
+                        bomberman.setInputDirection(MovingDirection.UP);
                         bomberman.increaseVelocity();
                         break;
                     case DOWN:
-                        bomberman.setInputDirection(MovingEntity.MovingDirection.DOWN);
+                        bomberman.setInputDirection(MovingDirection.DOWN);
                         bomberman.increaseVelocity();
                         break;
                     case LEFT:
-                        bomberman.setInputDirection(MovingEntity.MovingDirection.LEFT);
+                        bomberman.setInputDirection(MovingDirection.LEFT);
                         bomberman.increaseVelocity();
                         break;
                     case RIGHT:
-                        bomberman.setInputDirection(MovingEntity.MovingDirection.RIGHT);
+                        bomberman.setInputDirection(MovingDirection.RIGHT);
                         bomberman.increaseVelocity();
                         break;
 

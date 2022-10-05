@@ -4,16 +4,18 @@ import javafx.scene.image.Image;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.graphics.Sprite;
 
-public class Bomber extends MovingEntity {
+public class Bomber extends SetAnimatedEntity {
 
-    private final int speed = 5;
-    public boolean _moving = false;
-    public boolean running, goNorth, goSouth, goEast, goWest;
+    public boolean goNorth;
+    public boolean goSouth;
+    public boolean goEast;
+    public boolean goWest;
     public MovingDirection inputDirection;
-    protected boolean _alive = true;
+    private boolean alive = true;
+    private int numberOfBombs = 1;
     private int velocity = 1;
 
-    private int maxVelocity = 3;
+    private int maxVelocity = 1;
     /**
      * Khởi tạo Bomber với tập hình ảnh.
      *
@@ -41,7 +43,7 @@ public class Bomber extends MovingEntity {
         super.addFrame(Sprite.player_right.getFxImage(), MovingDirection.RIGHT);
         super.addFrame(Sprite.player_right_2.getFxImage(), MovingDirection.RIGHT);
 
-        super.setCurrentDirection(MovingDirection.STAND);
+        super.setCurrentState(MovingDirection.STAND);
     }
     /**
      * Chỉ cho debug, không hiệu ứng
@@ -55,14 +57,16 @@ public class Bomber extends MovingEntity {
     }
 
     public void increaseVelocity() {
-        this.velocity++;
+        if (currentFrameCount < BombermanGame.fps / MAX_ANIMATE / 2) {
+            this.velocity++;
+        }
         if (velocity > maxVelocity) velocity = maxVelocity;
     }
 
     public void setInputDirection(MovingDirection inputDirection) {
         this.inputDirection = inputDirection;
         if (inputDirection == null) {
-            super.setCurrentDirection(MovingDirection.STAND);
+            super.setCurrentState(MovingDirection.STAND);
         }
     }
 
@@ -110,7 +114,7 @@ public class Bomber extends MovingEntity {
                 break;
         }
 
-        super.setCurrentDirection(inputDirection);
+        super.setCurrentState(inputDirection);
         if (xVel != 0 || yVel != 0) {
             if (canMove(x + xVel, y + yVel)) {
                 move(xVel, yVel);
@@ -119,6 +123,7 @@ public class Bomber extends MovingEntity {
     }
 
     public void move(double xa, double ya) {
+//        TODO: xử lý input cho việc nhân vật chen vào giữa đơn giản hơn
         y += ya;
 //        if ((int) y % Sprite.SCALED_SIZE <= (Sprite.SCALED_SIZE / Sprite.DEFAULT_SIZE)
 //        || (int) y % Sprite.SCALED_SIZE >= (Sprite.DEFAULT_SIZE - 1) *(Sprite.SCALED_SIZE / Sprite.DEFAULT_SIZE) ) {
