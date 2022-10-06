@@ -158,26 +158,6 @@ public class Bomber extends SetAnimatedEntity {
 //        }
     }
 
-    @Override
-    public void render(GraphicsContext gc) {
-        int size = Sprite.SCALED_SIZE;
-        int defaultSize = Sprite.DEFAULT_SIZE;
-        int tempX = x, tempY = y;
-//        if (x % size < size - (x % size) && x % size <= 2 * (size / defaultSize)) {
-//            x -= x % size;
-//        } else if (size - (x % size) <= 2 * (size / defaultSize)) {
-//            x += size - (x % size);
-//        }
-//        if (y % size < size - (y % size) && y % size <= 2 * (size / defaultSize)) {
-//            y -= y % size;
-//        } else if (size - (y % size) <= 2 * (size / defaultSize)) {
-//            y += size - (y % size);
-//        }
-        super.render(gc);
-        x = tempX;
-        y = tempY;
-    }
-
     /**
      * Hàm kiểm tra có di chuyển được không so với block, brick, bomb
      *
@@ -188,14 +168,14 @@ public class Bomber extends SetAnimatedEntity {
     public boolean canMove(int nextX, int nextY) {
         int size = Sprite.SCALED_SIZE;
         int defaultSize = Sprite.DEFAULT_SIZE;
-        if (nextX % size < size - (nextX % size) && nextX % size <= 2 * (size / defaultSize)) {
+        if (nextX % size < size - (nextX % size) && nextX % size <= 3 * (size / defaultSize)) {
             nextX -= nextX % size;
-        } else if (size - (nextX % size) <= 2 * (size / defaultSize)) {
+        } else if (size - (nextX % size) <= 3 * (size / defaultSize)) {
             nextX += size - (nextX % size);
         }
-        if (nextY % size < size - (nextY % size) && nextY % size <= 2 * (size / defaultSize)) {
+        if (nextY % size < size - (nextY % size) && nextY % size <= 3 * (size / defaultSize)) {
             nextY -= nextY % size;
-        } else if (size - (nextX % size) <= 2 * (size / defaultSize)) {
+        } else if (size - (nextX % size) <= 3 * (size / defaultSize)) {
             nextY += size - (nextY % size);
         }
         boolean result = BombermanGame.isFree(nextX, nextY);
