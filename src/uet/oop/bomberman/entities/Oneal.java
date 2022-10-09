@@ -6,6 +6,9 @@ import uet.oop.bomberman.graphics.Sprite;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Oneal chỉ còn va chạm với bomb, muốn thay đổi gì nhắn lại
+ */
 public class Oneal extends Enemy {
     private Map<MovingDirection, Boolean> directionMap = new HashMap<>();
     MovingDirection randomMove = MovingDirection.LEFT;

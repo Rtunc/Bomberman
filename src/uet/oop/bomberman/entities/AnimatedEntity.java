@@ -86,6 +86,7 @@ public abstract class AnimatedEntity extends Entity {
     /**
      * render override lại để render hiệu ứng
      * với thời lượng = fps / frame / 3 (vì không / 3 hiệu ứng bị chậm, có thể thay đổi tùy thích)
+     * nếu isRender không cho render => không render
      * @param gc GC
      */
     @Override

@@ -248,12 +248,18 @@ public class BombermanGame extends Application {
 
     public void update() {
         entities.forEach(Entity::update);
+
+//      Tìm bomber
+//      TODO: có cách nào tìm bomber nhanh hơn sửa vào đây
         Bomber bomber = null;
         for (Entity b :
                 entities) {
             if (b instanceof Bomber) {
                 bomber = (Bomber) b;
-            }}
+            }
+        }
+
+//      Check enemy
         for (Entity o :
                 entities) {
             if (o instanceof Enemy) {
