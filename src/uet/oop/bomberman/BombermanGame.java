@@ -2,15 +2,23 @@ package uet.oop.bomberman;
 
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.Interpolator;
+import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import uet.oop.bomberman.entities.*;
+import uet.oop.bomberman.graphics.Camera;
 import uet.oop.bomberman.graphics.Sprite;
 
 import java.io.BufferedReader;
@@ -22,7 +30,9 @@ import java.util.List;
 
 public class BombermanGame extends Application {
     public static int WIDTH;
+    private Camera camera;
     public static int HEIGHT;
+    public Bomber bomberman;
     public static double fps;
     private static char[][] mapMatrix;
     private GraphicsContext gc;
@@ -59,16 +69,17 @@ public class BombermanGame extends Application {
 
     @Override
     public void start(Stage stage) {
-
+        BorderPane border = new BorderPane();
         createMapFromFile();
-        Bomber bomberman = new Bomber(1, 1);
+        bomberman = new Bomber(1, 1);
+        camera = new Camera(bomberman);
         entities.add(bomberman);
         // Tao Canvas
         canvas = new Canvas(Sprite.SCALED_SIZE * WIDTH, Sprite.SCALED_SIZE * HEIGHT);
         gc = canvas.getGraphicsContext2D();
 
         // Tao root container
-        Group root = new Group();
+        Pane root = new Pane();
         root.getChildren().add(canvas);
 
         // Tao scene
@@ -151,6 +162,8 @@ public class BombermanGame extends Application {
 //        })
         // Them scene vao stage
         stage.setScene(scene);
+        stage.setHeight(240);
+        stage.setWidth(240);
         stage.show();
 
         AnimationTimer timer = new AnimationTimer() {
@@ -253,8 +266,16 @@ public class BombermanGame extends Application {
 
     public void update() {
         entities.forEach(Entity::update);
+        TranslateTransition t = new TranslateTransition(Duration.millis(1), canvas);
+        t.setFromX(bomberman.getX());
+        t.setToX(120-bomberman.getX());
+        t.setFromY(bomberman.getY());
+        t.setToY(120-bomberman.getY());
 
+        t.setInterpolator(Interpolator.LINEAR);
+        t.play();
         stillObjects.forEach(Entity::update);
+        camera.update(this);
 
     }
 
@@ -267,6 +288,7 @@ public class BombermanGame extends Application {
     }
 
     public void render() {
+
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         stillObjects.forEach(g -> g.render(gc));
         entities.forEach(g -> g.render(gc));
