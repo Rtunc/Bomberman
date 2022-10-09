@@ -101,6 +101,9 @@ public class Bomber extends SetAnimatedEntity {
         if (inputDirection == null) {
             return;
         }
+        if (this.getCurrentState() == CollisionAction.DEAD) {
+            return;
+        }
 
         int xVel = 0, yVel = 0;
         switch (inputDirection) {
