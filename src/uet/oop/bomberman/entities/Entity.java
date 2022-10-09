@@ -47,4 +47,17 @@ public abstract class Entity {
 
     }
 
+    /**
+     * Kiểm tra 2 thực thể có va chạm
+     * @param x x thực thể cần kiểm tra
+     * @param y y thực thể cần kiểm tra
+     * @return có va chạm với thực thể này?
+     */
+    public boolean collision(int x, int y) {
+        if (Math.abs(x - this.getX()) <= Sprite.SCALED_SIZE) {
+            return Math.abs(y - this.getY()) <= Sprite.SCALED_SIZE;
+        }
+        return false;
+    }
+
 }

@@ -4,18 +4,30 @@ import javafx.scene.image.Image;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.graphics.Sprite;
 
+/**
+ * Bomber là người chơi
+ */
 public class Bomber extends SetAnimatedEntity {
 
+    /**
+     * Max tốc độ khi người chơi nhấn giữ
+     */
+    private static final int maxVelocity = 3;
     public boolean goNorth;
     public boolean goSouth;
     public boolean goEast;
     public boolean goWest;
+    /**
+     * Hướng nhập từ người chơi
+     */
     public MovingDirection inputDirection;
+    /**
+     * isAlive còn sống không
+     */
     private boolean alive = true;
-    private int numberOfBombs = 1;
+    private final int numberOfBombs = 1;
     private int velocity = 1;
 
-    private int maxVelocity = 1;
     /**
      * Khởi tạo Bomber với tập hình ảnh.
      *
@@ -43,8 +55,13 @@ public class Bomber extends SetAnimatedEntity {
         super.addFrame(Sprite.player_right.getFxImage(), MovingDirection.RIGHT);
         super.addFrame(Sprite.player_right_2.getFxImage(), MovingDirection.RIGHT);
 
+        super.addFrame(Sprite.player_dead1.getFxImage(), CollisionAction.DEAD);
+        super.addFrame(Sprite.player_dead2.getFxImage(), CollisionAction.DEAD);
+        super.addFrame(Sprite.player_dead3.getFxImage(), CollisionAction.DEAD);
+
         super.setCurrentState(MovingDirection.STAND);
     }
+
     /**
      * Chỉ cho debug, không hiệu ứng
      */
@@ -52,10 +69,16 @@ public class Bomber extends SetAnimatedEntity {
         super(xUnit, yUnit, img);
     }
 
+    /**
+     * Nhả tốc độ
+     */
     public void resetVelocity() {
         this.velocity = 1;
     }
 
+    /**
+     * Tăng tốc khi giữ
+     */
     public void increaseVelocity() {
         if (currentFrameCount < BombermanGame.fps / MAX_ANIMATE / 2) {
             this.velocity++;
@@ -63,6 +86,11 @@ public class Bomber extends SetAnimatedEntity {
         if (velocity > maxVelocity) velocity = maxVelocity;
     }
 
+    /**
+     * Nhận vào hướng di chuyển từ người chơi
+     *
+     * @param inputDirection hướng di chuyển
+     */
     public void setInputDirection(MovingDirection inputDirection) {
         this.inputDirection = inputDirection;
         if (inputDirection == null) {
@@ -70,6 +98,9 @@ public class Bomber extends SetAnimatedEntity {
         }
     }
 
+    /**
+     * Tính toán nước đi
+     */
     protected void calculateMove() {
         // TODO: xử lý nhận tín hiệu điều khiển hướng đi từ _input và gọi move() để thực hiện di chuyển
         // TODO: nhớ cập nhật lại giá trị cờ _moving khi thay đổi trạng thái di chuyển
@@ -95,6 +126,9 @@ public class Bomber extends SetAnimatedEntity {
 //        }
 
         if (inputDirection == null) {
+            return;
+        }
+        if (!this.alive) {
             return;
         }
 
@@ -146,12 +180,26 @@ public class Bomber extends SetAnimatedEntity {
 
     /**
      * Hàm kiểm tra có di chuyển được không so với block, brick, bomb
+     * <p>
+     * Cho phép lệch 3px so với gạch
      *
      * @param nextX next X
      * @param nextY next Y
      * @return có di chuyển được không
      */
     public boolean canMove(int nextX, int nextY) {
+        int size = Sprite.SCALED_SIZE;
+        int defaultSize = Sprite.DEFAULT_SIZE;
+        if (nextX % size < size - (nextX % size) && nextX % size <= 3 * (size / defaultSize)) {
+            nextX -= nextX % size;
+        } else if (size - (nextX % size) <= 3 * (size / defaultSize)) {
+            nextX += size - (nextX % size);
+        }
+        if (nextY % size < size - (nextY % size) && nextY % size <= 3 * (size / defaultSize)) {
+            nextY -= nextY % size;
+        } else if (size - (nextX % size) <= 3 * (size / defaultSize)) {
+            nextY += size - (nextY % size);
+        }
         boolean result = BombermanGame.isFree(nextX, nextY);
         return result;
     }
@@ -164,6 +212,20 @@ public class Bomber extends SetAnimatedEntity {
 //
 //        detectPlaceBomb();
 
+    }
+
+    /**
+     * Cài đặt hành động khi người chơi chết
+     */
+    public void setBomberDead() {
+        if (this.alive) {
+            super.setCurrentState(CollisionAction.DEAD);
+            super.frame = 0;
+            this.alive = false;
+        }
+        if (frame == MAX_ANIMATE - 1) {
+            isRender = false;
+        }
     }
 
     public enum StatusDirection {
