@@ -25,11 +25,10 @@ public class BombermanGame extends Application {
     public static int HEIGHT;
     public static double fps;
     private static char[][] mapMatrix;
-    private GraphicsContext gc;
-    private Canvas canvas;
     private final List<Entity> entities = new ArrayList<>();
     private final List<Entity> stillObjects = new ArrayList<>();
-
+    private GraphicsContext gc;
+    private Canvas canvas;
 
     public static void main(String[] args) {
 
@@ -49,7 +48,6 @@ public class BombermanGame extends Application {
 
         int nextX_4 = (nextX + size - 2) / size;
         int nextY_4 = (nextY + size - 2) / size;
-        System.out.println(nextX + " " + nextY);
         return !((mapMatrix[nextY_1][nextX_1] == '*' || mapMatrix[nextY_1][nextX_1] == '#') ||
                 (mapMatrix[nextY_2][nextX_2] == '*' || mapMatrix[nextY_2][nextX_2] == '#') ||
                 (mapMatrix[nextY_3][nextX_3] == '*' || mapMatrix[nextY_3][nextX_3] == '#') ||
@@ -177,7 +175,6 @@ public class BombermanGame extends Application {
             Reader reader = new FileReader("res/levels/Level1.txt");
             bufferedReader = new BufferedReader(reader);
             String firstLine = bufferedReader.readLine();
-            System.out.println(firstLine);
             int level = 0;
             int row = 0;
             int column = 0;
@@ -188,12 +185,10 @@ public class BombermanGame extends Application {
             row = Integer.parseInt(tokens[1]);
             column = Integer.parseInt(tokens[2]);
             WIDTH = column;
-            System.out.println(WIDTH);
             HEIGHT = row;
             mapMatrix = new char[row][column];
             for (int i = 0; i < row; i++) {
                 String rowText = bufferedReader.readLine();
-                System.out.println(rowText);
                 for (int j = 0; j < column; j++) {
                     char x = rowText.charAt(j);
                     mapMatrix[i][j] = x;
@@ -232,7 +227,7 @@ public class BombermanGame extends Application {
                     case '2': {
                         Entity object = new Grass(j, i, Sprite.grass.getFxImage());
                         stillObjects.add(object);
-                        Entity object2 = new Oneal(j, i, Sprite.oneal_dead.getFxImage());
+                        Entity object2 = new Oneal(j, i);
                         entities.add(object2);
                         break;
                     }
@@ -253,6 +248,18 @@ public class BombermanGame extends Application {
 
     public void update() {
         entities.forEach(Entity::update);
+        Bomber bomber = null;
+        for (Entity b :
+                entities) {
+            if (b instanceof Bomber) {
+                bomber = (Bomber) b;
+            }}
+        for (Entity o :
+                entities) {
+            if (o instanceof Enemy) {
+                ((Enemy) o).checkBomber(bomber);
+            }
+        }
 
         stillObjects.forEach(Entity::update);
 

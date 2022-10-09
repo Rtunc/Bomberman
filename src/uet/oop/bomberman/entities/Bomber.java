@@ -1,11 +1,8 @@
 package uet.oop.bomberman.entities;
 
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.graphics.Sprite;
-
-import java.awt.font.GraphicAttribute;
 
 public class Bomber extends SetAnimatedEntity {
 
@@ -18,7 +15,7 @@ public class Bomber extends SetAnimatedEntity {
     private int numberOfBombs = 1;
     private int velocity = 1;
 
-    private int maxVelocity = 3;
+    private static int maxVelocity = 3;
     /**
      * Khởi tạo Bomber với tập hình ảnh.
      *
@@ -45,6 +42,10 @@ public class Bomber extends SetAnimatedEntity {
         super.addFrame(Sprite.player_right_1.getFxImage(), MovingDirection.RIGHT);
         super.addFrame(Sprite.player_right.getFxImage(), MovingDirection.RIGHT);
         super.addFrame(Sprite.player_right_2.getFxImage(), MovingDirection.RIGHT);
+
+        super.addFrame(Sprite.player_dead1.getFxImage(), CollisionAction.DEAD);
+        super.addFrame(Sprite.player_dead2.getFxImage(), CollisionAction.DEAD);
+        super.addFrame(Sprite.player_dead3.getFxImage(), CollisionAction.DEAD);
 
         super.setCurrentState(MovingDirection.STAND);
     }
@@ -127,7 +128,6 @@ public class Bomber extends SetAnimatedEntity {
 
     public void move(double xa, double ya) {
 //        TODO: xử lý input cho việc nhân vật chen vào giữa đơn giản hơn
-//        int size = Sprite.SCALED_SIZE;
         y += ya;
 //        if ((int) y % Sprite.SCALED_SIZE <= (Sprite.SCALED_SIZE / Sprite.DEFAULT_SIZE)
 //        || (int) y % Sprite.SCALED_SIZE >= (Sprite.DEFAULT_SIZE - 1) *(Sprite.SCALED_SIZE / Sprite.DEFAULT_SIZE) ) {
@@ -145,16 +145,6 @@ public class Bomber extends SetAnimatedEntity {
 //            } else {
 //                x += (Sprite.SCALED_SIZE / Sprite.DEFAULT_SIZE);
 //            }
-//        }
-//        if (x % size < size - (x % size)) {
-//            x -= x % size;
-//        } else {
-//            x += size - (x % size);
-//        }
-//        if (x % size < size - (x % size)) {
-//            x -= x % size;
-//        } else {
-//            x += size - (x % size);
 //        }
     }
 
@@ -182,7 +172,6 @@ public class Bomber extends SetAnimatedEntity {
         return result;
     }
 
-
     @Override
     public void update() {
 
@@ -191,6 +180,16 @@ public class Bomber extends SetAnimatedEntity {
 //
 //        detectPlaceBomb();
 
+    }
+
+    public void setBomberDead() {
+        if (super.getCurrentState() != CollisionAction.DEAD){
+            super.setCurrentState(CollisionAction.DEAD);
+            super.frame = 0;
+        }
+        if (frame == MAX_ANIMATE - 1) {
+            isRender = false;
+        }
     }
 
     public enum StatusDirection {
