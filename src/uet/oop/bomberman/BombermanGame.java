@@ -1,6 +1,6 @@
 package uet.oop.bomberman;
 
-
+import uet.oop.bomberman.graphics.Camera;
 import javafx.animation.AnimationTimer;
 import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
@@ -30,7 +30,7 @@ import java.util.List;
 
 public class BombermanGame extends Application {
     public static int WIDTH;
-
+    private Camera camera;
     public static int HEIGHT;
     public Bomber bomberman;
     public static double fps;
@@ -71,6 +71,7 @@ public class BombermanGame extends Application {
         BorderPane border = new BorderPane();
         createMapFromFile();
         bomberman = new Bomber(1, 1);
+        camera = new Camera(bomberman);
 
         entities.add(bomberman);
         // Tao Canvas
