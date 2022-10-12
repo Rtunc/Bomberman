@@ -2,17 +2,24 @@ package uet.oop.bomberman;
 
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.Interpolator;
+import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import uet.oop.bomberman.entities.*;
+import uet.oop.bomberman.entities.bomb.*;
 import uet.oop.bomberman.graphics.Sprite;
-import uet.oop.bomberman.entities.Bomb.Bomb;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -21,18 +28,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 public class BombermanGame extends Application {
     public static int WIDTH;
+
     public static int HEIGHT;
+    public Bomber bomberman;
     public static double fps;
     private static char[][] mapMatrix;
-    private GraphicsContext gc;
-    private Canvas canvas;
     private final List<Entity> entities = new ArrayList<>();
     public static final List<Bomb> bombs = new ArrayList<>();
     private final List<Entity> stillObjects = new ArrayList<>();
-
+    private GraphicsContext gc;
+    private Canvas canvas;
 
     public static void main(String[] args) {
 
@@ -52,7 +59,6 @@ public class BombermanGame extends Application {
 
         int nextX_4 = (nextX + size - 2) / size;
         int nextY_4 = (nextY + size - 2) / size;
-        System.out.println(nextX + " " + nextY);
         return !((mapMatrix[nextY_1][nextX_1] == '*' || mapMatrix[nextY_1][nextX_1] == '#') ||
                 (mapMatrix[nextY_2][nextX_2] == '*' || mapMatrix[nextY_2][nextX_2] == '#') ||
                 (mapMatrix[nextY_3][nextX_3] == '*' || mapMatrix[nextY_3][nextX_3] == '#') ||
@@ -62,16 +68,17 @@ public class BombermanGame extends Application {
 
     @Override
     public void start(Stage stage) {
-
+        BorderPane border = new BorderPane();
         createMapFromFile();
-        Bomber bomberman = new Bomber(1, 1);
+        bomberman = new Bomber(1, 1);
+
         entities.add(bomberman);
         // Tao Canvas
         canvas = new Canvas(Sprite.SCALED_SIZE * WIDTH, Sprite.SCALED_SIZE * HEIGHT);
         gc = canvas.getGraphicsContext2D();
 
         // Tao root container
-        Group root = new Group();
+        Pane root = new Pane();
         root.getChildren().add(canvas);
 
         // Tao scene
@@ -120,43 +127,14 @@ public class BombermanGame extends Application {
                 }
             }
         });
-//        scene.setOnKeyPressed(KeyEvent -> {
-//            KeyCode keyCode = KeyEvent.getCode();
-//            switch (keyCode) {
-//                case KP_RIGHT: {
-//                    bomberman.status = Bomber.StatusDirection.RIGHT;
-//                    System.out.println(bomberman.status);
-//                    break;
-//                }
-//                case LEFT: {
-//                    bomberman.status = Bomber.StatusDirection.LEFT;
-//                    break;
-//                }
 //
-//                case UP: {
-//                    bomberman.status = Bomber.StatusDirection.UP;
-//                    break;
-//                }
-//
-//                case DOWN: {
-//                    bomberman.status = Bomber.StatusDirection.DOWN;
-//                    break;
-//                }
-//                case SPACE: {
-//                    bomberman.status = Bomber.StatusDirection.STOP;
-//                    System.out.println(bomberman.status);
-//                    break;
-//                }
-//
-//
-//
-//            }
-//        });
 //        Scene.setOnKeyPressed(event -> {
 //        KeyCode keycode = keyEvent.getCode();
 //        })
         // Them scene vao stage
         stage.setScene(scene);
+        stage.setHeight(240);
+        stage.setWidth(240);
         stage.show();
 
         AnimationTimer timer = new AnimationTimer() {
@@ -183,7 +161,6 @@ public class BombermanGame extends Application {
             Reader reader = new FileReader("res/levels/Level1.txt");
             bufferedReader = new BufferedReader(reader);
             String firstLine = bufferedReader.readLine();
-            System.out.println(firstLine);
             int level = 0;
             int row = 0;
             int column = 0;
@@ -194,12 +171,10 @@ public class BombermanGame extends Application {
             row = Integer.parseInt(tokens[1]);
             column = Integer.parseInt(tokens[2]);
             WIDTH = column;
-            System.out.println(WIDTH);
             HEIGHT = row;
             mapMatrix = new char[row][column];
             for (int i = 0; i < row; i++) {
                 String rowText = bufferedReader.readLine();
-                System.out.println(rowText);
                 for (int j = 0; j < column; j++) {
                     char x = rowText.charAt(j);
                     mapMatrix[i][j] = x;
@@ -238,7 +213,7 @@ public class BombermanGame extends Application {
                     case '2': {
                         Entity object = new Grass(j, i, Sprite.grass.getFxImage());
                         stillObjects.add(object);
-                        Entity object2 = new Oneal(j, i, Sprite.oneal_dead.getFxImage());
+                        Entity object2 = new Oneal(j, i, null);
                         entities.add(object2);
                         break;
                     }
@@ -259,20 +234,41 @@ public class BombermanGame extends Application {
 
     public void update() {
         entities.forEach(Entity::update);
-        bombs.forEach(Entity::update);
-        stillObjects.forEach(Entity::update);
 
-    }
-
-    public void checkCollision() {
-        for (int i = 0; i < stillObjects.size(); i++) {
-            if (stillObjects.get(i) instanceof Wall) {
-
+//      Tìm bomber
+//      TODO: có cách nào tìm bomber nhanh hơn sửa vào đây
+        Bomber bomber = null;
+        for (Entity b :
+                entities) {
+            if (b instanceof Bomber) {
+                bomber = (Bomber) b;
             }
         }
+
+//      Check enemy
+        for (Entity o :
+                entities) {
+            if (o instanceof Enemy) {
+                ((Enemy) o).checkBomber(bomber);
+            }
+        }
+        TranslateTransition t = new TranslateTransition(Duration.millis(1), canvas);
+        t.setFromX(bomberman.getX());
+        t.setToX(120-bomberman.getX());
+        t.setFromY(bomberman.getY());
+        t.setToY(120-bomberman.getY());
+
+        t.setInterpolator(Interpolator.LINEAR);
+        t.play();
+        stillObjects.forEach(Entity::update);
+        bombs.forEach(Entity::update);
+
+
     }
 
+
     public void render() {
+
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         stillObjects.forEach(g -> g.render(gc));
         bombs.forEach(g -> g.render(gc));

@@ -18,6 +18,7 @@ public abstract class Entity {
         this.y = yUnit * Sprite.SCALED_SIZE;
         this.img = img;
     }
+
     /**
      * lấy tọa độ X tọa độ đơn vị
      */
@@ -30,6 +31,7 @@ public abstract class Entity {
     public int getYUnit() {
         return (y+Sprite.DEFAULT_SIZE)/Sprite.SCALED_SIZE;
     }
+
     public void setImg(Image img) {
         this.img = img;
     }
@@ -56,6 +58,19 @@ public abstract class Entity {
 
     public void update() {
 
+    }
+
+    /**
+     * Kiểm tra 2 thực thể có va chạm
+     * @param x x thực thể cần kiểm tra
+     * @param y y thực thể cần kiểm tra
+     * @return có va chạm với thực thể này?
+     */
+    public boolean collision(int x, int y) {
+        if (Math.abs(x - this.getX()) <= Sprite.SCALED_SIZE) {
+            return Math.abs(y - this.getY()) <= Sprite.SCALED_SIZE;
+        }
+        return false;
     }
 
 }
