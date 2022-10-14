@@ -6,15 +6,12 @@ import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.event.EventHandler;
-import javafx.scene.Group;
-import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import uet.oop.bomberman.entities.*;
@@ -25,6 +22,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -134,8 +132,8 @@ public class BombermanGame extends Application {
 //        })
         // Them scene vao stage
         stage.setScene(scene);
-        stage.setHeight(240);
-        stage.setWidth(240);
+        stage.setHeight(13*32);
+        stage.setWidth(13*32);
         stage.show();
 
         AnimationTimer timer = new AnimationTimer() {
@@ -235,7 +233,14 @@ public class BombermanGame extends Application {
 
     public void update() {
         entities.forEach(Entity::update);
+        Iterator<Bomb> itB = bombs.iterator();
 
+        while (itB.hasNext()) {
+            Entity e = itB.next();
+            if(e.isDead()) {
+                itB.remove();
+            }
+        }
 //      Tìm bomber
 //      TODO: có cách nào tìm bomber nhanh hơn sửa vào đây
         Bomber bomber = null;
@@ -253,7 +258,7 @@ public class BombermanGame extends Application {
                 ((Enemy) o).checkBomber(bomber);
             }
         }
-        TranslateTransition t = new TranslateTransition(Duration.millis(1), canvas);
+        TranslateTransition t = new TranslateTransition(Duration.millis(0.1),canvas);
         t.setFromX(bomberman.getX());
         t.setToX(120-bomberman.getX());
         t.setFromY(bomberman.getY());

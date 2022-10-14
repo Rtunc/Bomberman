@@ -7,7 +7,7 @@ import uet.oop.bomberman.graphics.Sprite;
 public abstract class Entity {
     //Tọa độ X tính từ góc trái trên trong Canvas
     protected int x;
-
+    protected boolean isDead;
     //Tọa độ Y tính từ góc trái trên trong Canvas
     protected int y;
     protected Image img;
@@ -30,6 +30,13 @@ public abstract class Entity {
      */
     public int getYUnit() {
         return (y+Sprite.DEFAULT_SIZE)/Sprite.SCALED_SIZE;
+    }
+
+    public boolean isDead() {
+        return isDead;
+    }
+    public void setDead(boolean dead) {
+        isDead = dead;
     }
 
     public void setImg(Image img) {
