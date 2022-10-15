@@ -27,7 +27,6 @@ import java.util.List;
 
 
 public class BombermanGame extends Application {
-
     public static int WIDTH;
     private Camera camera;
     public static int HEIGHT;
@@ -45,29 +44,6 @@ public class BombermanGame extends Application {
         Application.launch(BombermanGame.class);
     }
 
-//    public static boolean isFree(int nextX, int nextY) {
-//        int size = Sprite.SCALED_SIZE;
-//        int nextX_1 = nextX / size;
-//        int nextY_1 = nextY / size;
-//
-//        int nextX_2 = (nextX + size - 2) / size;
-//        int nextY_2 = nextY / size;
-//
-//        int nextX_3 = nextX / size;
-//        int nextY_3 = (nextY + size - 2) / size;
-//
-//        int nextX_4 = (nextX + size - 2) / size;
-//        int nextY_4 = (nextY + size - 2) / size;
-////        return !((mapMatrix[nextY_1][nextX_1] == '*' || mapMatrix[nextY_1][nextX_1] == '#') ||
-////                (mapMatrix[nextY_2][nextX_2] == '*' || mapMatrix[nextY_2][nextX_2] == '#') ||
-////                (mapMatrix[nextY_3][nextX_3] == '*' || mapMatrix[nextY_3][nextX_3] == '#') ||
-////                (mapMatrix[nextY_4][nextX_4] == '*' || mapMatrix[nextY_4][nextX_4] == '#'));
-//        List<Entity> ListStillObject1 =BombermanGame.FindList(nextX_1, nextY_1, BombermanGame.stillObjects);
-//        List<Entity> ListStillObject2 =BombermanGame.FindList(nextX_2, nextY_2, BombermanGame.stillObjects);
-//        List<Entity> ListStillObject3 =BombermanGame.FindList(nextX_3, nextY_3, BombermanGame.stillObjects);
-//        List<Entity> ListStillObject4 =BombermanGame.FindList(nextX_3, nextY_1, BombermanGame.stillObjects);
-//
-//    }
     public static boolean isFree(int nextX, int nextY) {
         int size = Sprite.SCALED_SIZE;
         int nextX_1 = (nextX+2) / size;
@@ -248,23 +224,21 @@ public class BombermanGame extends Application {
                         stillObjects.add(object2);
                         Brick object = new Brick(j, i, Sprite.brick.getFxImage());
                         stillObjects.add(object);
-
                         break;
 
                     }
                     case '1': {
                         Entity object = new Grass(j, i, Sprite.grass.getFxImage());
                         stillObjects.add(object);
-                        Entity object1 = new Balloon(j, i, Sprite.balloom_left2.getFxImage());
+                        Entity object1 = new Balloom(j, i);
                         entities.add(object1);
                         break;
                     }
                     case '2': {
-                        Entity object2 = new Oneal(j, i, null);
-                        entities.add(object2);
                         Entity object = new Grass(j, i, Sprite.grass.getFxImage());
                         stillObjects.add(object);
-
+                        Entity object2 = new Oneal(j, i);
+                        entities.add(object2);
                         break;
                     }
 //
@@ -311,30 +285,13 @@ public class BombermanGame extends Application {
     public void update() {
         entities.forEach(Entity::update);
         Iterator<Bomb> itB = bombs.iterator();
-        Iterator<Entity> itE = entities.iterator();
-        Iterator<Entity> itS = stillObjects.iterator();
 
         while (itB.hasNext()) {
             Entity e = itB.next();
-            if (e.isRemove()) {
+            if(e.isDead()) {
                 itB.remove();
                 bomberman.setNumberOfBombs(bomberman.getNumberOfBombs() + 1);
             }
-
-        }
-        while (itE.hasNext()) {
-            Entity e = itE.next();
-            if (e.isRemove()) {
-                itE.remove();
-            }
-
-        }
-        while (itS.hasNext()) {
-            Entity e = itS.next();
-            if (e.isRemove()) {
-                itS.remove();
-            }
-
         }
 //      Tìm bomber
 //      TODO: có cách nào tìm bomber nhanh hơn sửa vào đây
@@ -383,11 +340,9 @@ public class BombermanGame extends Application {
     public void render() {
 
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
         stillObjects.forEach(g -> g.render(gc));
         bombs.forEach(g -> g.render(gc));
         entities.forEach(g -> g.render(gc));
-
     }
 }
 
