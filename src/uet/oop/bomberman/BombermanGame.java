@@ -212,7 +212,7 @@ public class BombermanGame extends Application {
                     case '2': {
                         Entity object = new Grass(j, i, Sprite.grass.getFxImage());
                         stillObjects.add(object);
-                        Entity object2 = new Oneal(j, i, null);
+                        Entity object2 = new Oneal(j, i);
                         entities.add(object2);
                         break;
                     }
