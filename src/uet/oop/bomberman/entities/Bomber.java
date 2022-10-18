@@ -22,12 +22,15 @@ public class Bomber extends SetAnimatedEntity {
      * Hướng nhập từ người chơi
      */
     public MovingDirection inputDirection;
+    private MovingDirection correctingDirection;
     /**
      * isAlive còn sống không
      */
     private boolean alive = true;
     private final int numberOfBombs = 1;
     private int velocity = 1;
+
+    private boolean autocorrecting = false;
 
     /**
      * Khởi tạo Bomber với tập hình ảnh.
@@ -93,6 +96,7 @@ public class Bomber extends SetAnimatedEntity {
      * @param inputDirection hướng di chuyển
      */
     public void setInputDirection(MovingDirection inputDirection) {
+        if (autocorrecting) return;
         this.inputDirection = inputDirection;
         if (inputDirection == null) {
             super.setCurrentState(MovingDirection.STAND);
@@ -105,27 +109,6 @@ public class Bomber extends SetAnimatedEntity {
     protected void calculateMove() {
         // TODO: xử lý nhận tín hiệu điều khiển hướng đi từ _input và gọi move() để thực hiện di chuyển
         // TODO: nhớ cập nhật lại giá trị cờ _moving khi thay đổi trạng thái di chuyển
-//        int xa = 0, ya = 0;
-//        if (goNorth && BombermanGame.isFree(x, y - 1)) {
-//            ya -= 1;
-//            super.setCurrentDirection(MovingDirection.UP);
-//        }
-//        if (goSouth && BombermanGame.isFree(x, y + 1)) {
-//            ya += 1;
-//            super.setCurrentDirection(MovingDirection.DOWN);
-//        }
-//        if (goEast && BombermanGame.isFree(x + 1, y)) {
-//            xa += 1;
-//            super.setCurrentDirection(MovingDirection.RIGHT);
-//        }
-//        if (goWest && BombermanGame.isFree(x - 1, y)) {
-//            xa -= 1;
-//            super.setCurrentDirection(MovingDirection.LEFT);
-//        }
-//        if (xa != 0 || ya != 0) {
-//            move(xa, ya);
-//        }
-
         if (inputDirection == null) {
             return;
         }
@@ -153,6 +136,36 @@ public class Bomber extends SetAnimatedEntity {
         if (xVel != 0 || yVel != 0) {
             if (canMove(x + xVel, y + yVel)) {
                 move(xVel, yVel);
+                autocorrecting = false;
+            } else {
+                int size = Sprite.SCALED_SIZE;
+                int scaled = size / Sprite.DEFAULT_SIZE;
+                int nextX = x + xVel;
+                int nextY = y + yVel;
+                int modX = nextX % size;
+                int modY = nextY % size;
+                if (size - modX <= 10 * scaled) {
+                    if (canMove(nextX + (size - modX), nextY) && xVel == 0 && modX != 0) {
+                        autocorrecting = true;
+                        move(1,0);
+                    }
+                } else if (modX <= 10 * scaled) {
+                    if (canMove(nextX - modX, nextY) && xVel == 0 && modX != 0) {
+                        autocorrecting = true;
+                        move(-1,0);
+                    }
+                }
+                if (size - modY <= 10 * scaled) {
+                    if (canMove(nextX, nextY + (size - modY)) && yVel == 0 && modY != 0) {
+                        autocorrecting = true;
+                        move(0,1);
+                    }
+                } else if (modY <= 10 * scaled) {
+                    if (canMove(nextX, nextY - modY) && yVel == 0 && modY != 0) {
+                        autocorrecting = true;
+                        move(0,-1);
+                    }
+                }
             }
         }
     }
@@ -189,18 +202,6 @@ public class Bomber extends SetAnimatedEntity {
      * @return có di chuyển được không
      */
     public boolean canMove(int nextX, int nextY) {
-        int size = Sprite.SCALED_SIZE;
-        int defaultSize = Sprite.DEFAULT_SIZE;
-        if (nextX % size < size - (nextX % size) && nextX % size <= 3 * (size / defaultSize)) {
-            nextX -= nextX % size;
-        } else if (size - (nextX % size) <= 3 * (size / defaultSize)) {
-            nextX += size - (nextX % size);
-        }
-        if (nextY % size < size - (nextY % size) && nextY % size <= 3 * (size / defaultSize)) {
-            nextY -= nextY % size;
-        } else if (size - (nextX % size) <= 3 * (size / defaultSize)) {
-            nextY += size - (nextY % size);
-        }
         boolean result = BombermanGame.isFree(nextX, nextY);
         return result;
     }
