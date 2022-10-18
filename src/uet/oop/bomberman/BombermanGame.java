@@ -90,7 +90,7 @@ public class BombermanGame extends Application {
     @Override
     public void start(Stage stage) {
         BorderPane border = new BorderPane();
-        createMapFromFile();
+        createMapFromFile("res/levels/Level1.txt");
         bomberman = new Bomber(1, 1);
         camera = new Camera(bomberman);
 
@@ -176,11 +176,11 @@ public class BombermanGame extends Application {
         createEntities();
     }
 
-    public void createMapFromFile() {
+    public void createMapFromFile(String fileName) {
         BufferedReader bufferedReader = null;
 
         try {
-            Reader reader = new FileReader("res/levels/Level1.txt");
+            Reader reader = new FileReader(fileName);
             bufferedReader = new BufferedReader(reader);
             String firstLine = bufferedReader.readLine();
             int level = 0;

@@ -26,6 +26,8 @@ public class Bomber extends SetAnimatedEntity {
     private int numberOfBombs = 1;
     private int velocity = 1;
 
+    private boolean autocorrecting = false;
+
 
     public int getNumberOfBombs() {
         return numberOfBombs;
@@ -99,6 +101,7 @@ public class Bomber extends SetAnimatedEntity {
      * @param inputDirection hướng di chuyển
      */
     public void setInputDirection(MovingDirection inputDirection) {
+        if (autocorrecting) return;
         this.inputDirection = inputDirection;
         if (inputDirection == null) {
             super.setCurrentState(MovingDirection.STAND);
@@ -140,6 +143,36 @@ public class Bomber extends SetAnimatedEntity {
         if (xVel != 0 || yVel != 0) {
             if (canMove(x + xVel, y + yVel)) {
                 move(xVel, yVel);
+                autocorrecting = false;
+            } else {
+                int size = Sprite.SCALED_SIZE;
+                int scaled = size / Sprite.DEFAULT_SIZE;
+                int nextX = x + xVel;
+                int nextY = y + yVel;
+                int modX = nextX % size;
+                int modY = nextY % size;
+                if (size - modX <= 10 * scaled) {
+                    if (canMove(nextX + (size - modX), nextY) && xVel == 0 && modX != 0) {
+                        autocorrecting = true;
+                        move(1,0);
+                    }
+                } else if (modX <= 10 * scaled) {
+                    if (canMove(nextX - modX, nextY) && xVel == 0 && modX != 0) {
+                        autocorrecting = true;
+                        move(-1,0);
+                    }
+                }
+                if (size - modY <= 10 * scaled) {
+                    if (canMove(nextX, nextY + (size - modY)) && yVel == 0 && modY != 0) {
+                        autocorrecting = true;
+                        move(0,1);
+                    }
+                } else if (modY <= 10 * scaled) {
+                    if (canMove(nextX, nextY - modY) && yVel == 0 && modY != 0) {
+                        autocorrecting = true;
+                        move(0,-1);
+                    }
+                }
             }
         }
     }
@@ -162,20 +195,8 @@ public class Bomber extends SetAnimatedEntity {
      * @return có di chuyển được không
      */
     public boolean canMove(int nextX, int nextY) {
-        int size = Sprite.SCALED_SIZE;
-        int defaultSize = Sprite.DEFAULT_SIZE;
-        if (nextX % size < size - (nextX % size) && nextX % size <= 3 * (size / defaultSize)) {
-            nextX -= nextX % size;
-        } else if (size - (nextX % size) <= 3 * (size / defaultSize)) {
-            nextX += size - (nextX % size);
-        }
-        if (nextY % size < size - (nextY % size) && nextY % size <= 3 * (size / defaultSize)) {
-            nextY -= nextY % size;
-        } else if (size - (nextX % size) <= 3 * (size / defaultSize)) {
-            nextY += size - (nextY % size);
-        }
-
-        return BombermanGame.isFree(nextX, nextY);
+        boolean result = BombermanGame.isFree(nextX, nextY);
+        return result;
     }
 
     public void placeBomb() {
