@@ -33,4 +33,16 @@ public enum MovingDirection implements AnimateAction {
         }
         return STAND;
     }
+
+    @Override
+    public AnimateAction getByNum(int num) {
+        num %= 4;
+        switch (num) {
+            case 0: return UP;
+            case 1: return DOWN;
+            case 2: return LEFT;
+            case 3: return RIGHT;
+        }
+        return STAND;
+    }
 }
