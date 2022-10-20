@@ -45,25 +45,70 @@ public class BombermanGame extends Application {
         Application.launch(BombermanGame.class);
     }
 
+//    public static boolean isFree(int nextX, int nextY) {
+//        int size = Sprite.SCALED_SIZE;
+//        int nextX_1 = nextX / size;
+//        int nextY_1 = nextY / size;
+//
+//        int nextX_2 = (nextX + size - 2) / size;
+//        int nextY_2 = nextY / size;
+//
+//        int nextX_3 = nextX / size;
+//        int nextY_3 = (nextY + size - 2) / size;
+//
+//        int nextX_4 = (nextX + size - 2) / size;
+//        int nextY_4 = (nextY + size - 2) / size;
+////        return !((mapMatrix[nextY_1][nextX_1] == '*' || mapMatrix[nextY_1][nextX_1] == '#') ||
+////                (mapMatrix[nextY_2][nextX_2] == '*' || mapMatrix[nextY_2][nextX_2] == '#') ||
+////                (mapMatrix[nextY_3][nextX_3] == '*' || mapMatrix[nextY_3][nextX_3] == '#') ||
+////                (mapMatrix[nextY_4][nextX_4] == '*' || mapMatrix[nextY_4][nextX_4] == '#'));
+//        List<Entity> ListStillObject1 =BombermanGame.FindList(nextX_1, nextY_1, BombermanGame.stillObjects);
+//        List<Entity> ListStillObject2 =BombermanGame.FindList(nextX_2, nextY_2, BombermanGame.stillObjects);
+//        List<Entity> ListStillObject3 =BombermanGame.FindList(nextX_3, nextY_3, BombermanGame.stillObjects);
+//        List<Entity> ListStillObject4 =BombermanGame.FindList(nextX_3, nextY_1, BombermanGame.stillObjects);
+//
+//    }
     public static boolean isFree(int nextX, int nextY) {
         int size = Sprite.SCALED_SIZE;
-        int nextX_1 = nextX / size;
-        int nextY_1 = nextY / size;
+        int nextX_1 = (nextX+2) / size;
+        int nextY_1 = (nextY+2) / size;
 
         int nextX_2 = (nextX + size - 2) / size;
-        int nextY_2 = nextY / size;
+        int nextY_2 = (nextY+2) / size;
 
-        int nextX_3 = nextX / size;
+        int nextX_3 = (nextX+2) / size;
         int nextY_3 = (nextY + size - 2) / size;
 
         int nextX_4 = (nextX + size - 2) / size;
         int nextY_4 = (nextY + size - 2) / size;
-        return !((mapMatrix[nextY_1][nextX_1] == '*' || mapMatrix[nextY_1][nextX_1] == '#') ||
-                (mapMatrix[nextY_2][nextX_2] == '*' || mapMatrix[nextY_2][nextX_2] == '#') ||
-                (mapMatrix[nextY_3][nextX_3] == '*' || mapMatrix[nextY_3][nextX_3] == '#') ||
-                (mapMatrix[nextY_4][nextX_4] == '*' || mapMatrix[nextY_4][nextX_4] == '#'));
-    }
 
+        List<Entity> ListStillObject1 =BombermanGame.FindList(nextX_1, nextY_1, BombermanGame.stillObjects);
+        List<Entity> ListStillObject2 =BombermanGame.FindList(nextX_2, nextY_2, BombermanGame.stillObjects);
+        List<Entity> ListStillObject3 =BombermanGame.FindList(nextX_3, nextY_3, BombermanGame.stillObjects);
+        List<Entity> ListStillObject4 =BombermanGame.FindList(nextX_4, nextY_4, BombermanGame.stillObjects);
+
+        for( Entity check : ListStillObject1) {
+            if(check instanceof Wall || check instanceof Brick) {
+                return false;
+            }
+        }
+        for( Entity check : ListStillObject2) {
+            if(check instanceof Wall || check instanceof Brick) {
+                return false;
+            }
+        }
+        for( Entity check : ListStillObject3) {
+            if(check instanceof Wall || check instanceof Brick) {
+                return false;
+            }
+        }
+        for( Entity check : ListStillObject4) {
+            if(check instanceof Wall || check instanceof Brick) {
+                return false;
+            }
+        }
+        return true;
+    }
 
 
     @Override

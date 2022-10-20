@@ -111,26 +111,7 @@ public class Bomber extends SetAnimatedEntity {
     protected void calculateMove() {
         // TODO: xử lý nhận tín hiệu điều khiển hướng đi từ _input và gọi move() để thực hiện di chuyển
         // TODO: nhớ cập nhật lại giá trị cờ _moving khi thay đổi trạng thái di chuyển
-//        int xa = 0, ya = 0;
-//        if (goNorth && BombermanGame.isFree(x, y - 1)) {
-//            ya -= 1;
-//            super.setCurrentDirection(MovingDirection.UP);
-//        }
-//        if (goSouth && BombermanGame.isFree(x, y + 1)) {
-//            ya += 1;
-//            super.setCurrentDirection(MovingDirection.DOWN);
-//        }
-//        if (goEast && BombermanGame.isFree(x + 1, y)) {
-//            xa += 1;
-//            super.setCurrentDirection(MovingDirection.RIGHT);
-//        }
-//        if (goWest && BombermanGame.isFree(x - 1, y)) {
-//            xa -= 1;
-//            super.setCurrentDirection(MovingDirection.LEFT);
-//        }
-//        if (xa != 0 || ya != 0) {
-//            move(xa, ya);
-//        }
+
 
         if (inputDirection == null) {
             return;

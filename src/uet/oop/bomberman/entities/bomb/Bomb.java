@@ -191,7 +191,7 @@ public class Bomb extends AnimatedEntity {
                     stop = true;
                 }
             }
-            for (Entity enemy : checkList) {
+            for (Entity enemy : entityList) {
                 enemy.setDead(true);
             }
             if(stop) {
@@ -214,7 +214,7 @@ public class Bomb extends AnimatedEntity {
                     stop = true;
                 }
             }
-            for (Entity enemy : checkList) {
+            for (Entity enemy : entityList) {
                 enemy.setDead(true);
             }
             if(stop) {
@@ -237,7 +237,7 @@ public class Bomb extends AnimatedEntity {
                     stop = true;
                 }
             }
-            for (Entity enemy : checkList) {
+            for (Entity enemy : entityList) {
                 enemy.setDead(true);
             }
             if(stop) {
@@ -260,7 +260,7 @@ public class Bomb extends AnimatedEntity {
                     stop = true;
                 }
             }
-            for (Entity enemy : checkList) {
+            for (Entity enemy : entityList) {
                 enemy.setDead(true);
             }
             if(stop) {
