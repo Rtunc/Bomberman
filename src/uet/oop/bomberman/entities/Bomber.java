@@ -1,8 +1,8 @@
 package uet.oop.bomberman.entities;
 
-import uet.oop.bomberman.entities.bomb.Bomb;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.BombermanGame;
+import uet.oop.bomberman.entities.bomb.Bomb;
 import uet.oop.bomberman.graphics.Sprite;
 
 /**
@@ -14,6 +14,7 @@ public class Bomber extends SetAnimatedEntity {
      * Max tốc độ khi người chơi nhấn giữ
      */
     private static final int maxVelocity = 3;
+    private final int numberOfBombs = 1;
     public boolean goNorth;
     public boolean goSouth;
     public boolean goEast;
@@ -27,10 +28,12 @@ public class Bomber extends SetAnimatedEntity {
      * isAlive còn sống không
      */
     private boolean alive = true;
-    private final int numberOfBombs = 1;
+    private int heart = 1;
     private int velocity = 1;
 
     private boolean autocorrecting = false;
+
+    private int deadRecover = 120;
 
     /**
      * Khởi tạo Bomber với tập hình ảnh.
@@ -147,23 +150,23 @@ public class Bomber extends SetAnimatedEntity {
                 if (size - modX <= 10 * scaled) {
                     if (canMove(nextX + (size - modX), nextY) && xVel == 0 && modX != 0) {
                         autocorrecting = true;
-                        move(1,0);
+                        move(1, 0);
                     }
                 } else if (modX <= 10 * scaled) {
                     if (canMove(nextX - modX, nextY) && xVel == 0 && modX != 0) {
                         autocorrecting = true;
-                        move(-1,0);
+                        move(-1, 0);
                     }
                 }
                 if (size - modY <= 10 * scaled) {
                     if (canMove(nextX, nextY + (size - modY)) && yVel == 0 && modY != 0) {
                         autocorrecting = true;
-                        move(0,1);
+                        move(0, 1);
                     }
                 } else if (modY <= 10 * scaled) {
                     if (canMove(nextX, nextY - modY) && yVel == 0 && modY != 0) {
                         autocorrecting = true;
-                        move(0,-1);
+                        move(0, -1);
                     }
                 }
             }
@@ -207,14 +210,15 @@ public class Bomber extends SetAnimatedEntity {
     }
 
     public void placeBomb() {
-        Bomb b= new Bomb(this.getXUnit(), this.getYUnit());
+        Bomb b = new Bomb(this.getXUnit(), this.getYUnit());
         BombermanGame.bombs.add(b);
 
     }
+
     @Override
     public void update() {
 
-
+        bomberDead();
         calculateMove();
 //
 //        detectPlaceBomb();
@@ -230,8 +234,22 @@ public class Bomber extends SetAnimatedEntity {
             super.frame = 0;
             this.alive = false;
         }
-        if (frame == MAX_ANIMATE - 1) {
-            isRender = false;
+    }
+
+    private void bomberDead() {
+        if (!this.alive) {
+            if (!isRender && heart > 0 && deadRecover == 0) {
+                heart--;
+                isRender = true;
+                alive = true;
+                deadRecover = 120;
+                super.setCurrentState(MovingDirection.STAND);
+            } else if (frame == MAX_ANIMATE - 1) {
+                isRender = false;
+            }
+            if (!isRender) {
+                deadRecover--;
+            }
         }
     }
 

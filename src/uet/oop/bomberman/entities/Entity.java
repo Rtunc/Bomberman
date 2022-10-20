@@ -74,8 +74,8 @@ public abstract class Entity {
      * @return có va chạm với thực thể này?
      */
     public boolean collision(int x, int y) {
-        if (Math.abs(x - this.getX()) <= Sprite.SCALED_SIZE) {
-            return Math.abs(y - this.getY()) <= Sprite.SCALED_SIZE;
+        if (Math.abs(x - this.getX()) < Sprite.SCALED_SIZE) {
+            return Math.abs(y - this.getY()) < Sprite.SCALED_SIZE;
         }
         return false;
     }

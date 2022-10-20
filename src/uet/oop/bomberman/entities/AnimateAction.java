@@ -7,4 +7,6 @@ public interface AnimateAction {
     String getAction();
 
     AnimateAction getNext(AnimateAction animateAction);
+
+    AnimateAction getByNum(int num);
 }

@@ -15,4 +15,9 @@ public enum CollisionAction implements AnimateAction {
     public AnimateAction getNext(AnimateAction animateAction) {
         return DEAD;
     }
+
+    @Override
+    public AnimateAction getByNum(int num) {
+        return DEAD;
+    }
 }

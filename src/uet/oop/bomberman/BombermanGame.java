@@ -205,8 +205,8 @@ public class BombermanGame extends Application {
                     case '1': {
                         Entity object = new Grass(j, i, Sprite.grass.getFxImage());
                         stillObjects.add(object);
-                        Entity object1 = new Balloon(j, i, Sprite.balloom_left2.getFxImage());
-                        entities.add(object);
+                        Entity object1 = new Balloom(j, i);
+                        entities.add(object1);
                         break;
                     }
                     case '2': {
