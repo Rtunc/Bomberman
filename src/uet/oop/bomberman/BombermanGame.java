@@ -61,8 +61,9 @@ public class BombermanGame extends Application {
                 (mapMatrix[nextY_2][nextX_2] == '*' || mapMatrix[nextY_2][nextX_2] == '#') ||
                 (mapMatrix[nextY_3][nextX_3] == '*' || mapMatrix[nextY_3][nextX_3] == '#') ||
                 (mapMatrix[nextY_4][nextX_4] == '*' || mapMatrix[nextY_4][nextX_4] == '#'));
-
     }
+
+
 
     @Override
     public void start(Stage stage) {
@@ -230,17 +231,28 @@ public class BombermanGame extends Application {
             }
         }
     }
-
+    public Entity getStillObjectAt(int Xunit, int Yunit) {
+        for (Entity b :
+                stillObjects) {
+            if (b instanceof Wall || b instanceof Brick) {
+                return b;
+            }
+        }
+        return null;
+    }
     public void update() {
         entities.forEach(Entity::update);
         Iterator<Bomb> itB = bombs.iterator();
 
         while (itB.hasNext()) {
             Entity e = itB.next();
-            if(e.isDead()) {
+            if(e.isRemove()) {
                 itB.remove();
+                bomberman.setNumberOfBombs(bomberman.getNumberOfBombs()+1);
             }
+
         }
+        System.out.println(bombs.size());
 //      Tìm bomber
 //      TODO: có cách nào tìm bomber nhanh hơn sửa vào đây
         Bomber bomber = null;

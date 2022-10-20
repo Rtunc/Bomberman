@@ -14,10 +14,7 @@ public class Bomber extends SetAnimatedEntity {
      * Max tốc độ khi người chơi nhấn giữ
      */
     private static final int maxVelocity = 3;
-    public boolean goNorth;
-    public boolean goSouth;
-    public boolean goEast;
-    public boolean goWest;
+
     /**
      * Hướng nhập từ người chơi
      */
@@ -26,8 +23,17 @@ public class Bomber extends SetAnimatedEntity {
      * isAlive còn sống không
      */
     private boolean alive = true;
-    private final int numberOfBombs = 1;
+    private int numberOfBombs = 1;
     private int velocity = 1;
+
+
+    public int getNumberOfBombs() {
+        return numberOfBombs;
+    }
+
+    public void setNumberOfBombs(int numberOfBombs) {
+        this.numberOfBombs = numberOfBombs;
+    }
 
     /**
      * Khởi tạo Bomber với tập hình ảnh.
@@ -160,23 +166,9 @@ public class Bomber extends SetAnimatedEntity {
     public void move(double xa, double ya) {
 //        TODO: xử lý input cho việc nhân vật chen vào giữa đơn giản hơn
         y += ya;
-//        if ((int) y % Sprite.SCALED_SIZE <= (Sprite.SCALED_SIZE / Sprite.DEFAULT_SIZE)
-//        || (int) y % Sprite.SCALED_SIZE >= (Sprite.DEFAULT_SIZE - 1) *(Sprite.SCALED_SIZE / Sprite.DEFAULT_SIZE) ) {
-//            if (ya < 0) {
-//                y -= (Sprite.SCALED_SIZE / Sprite.DEFAULT_SIZE);
-//            } else {
-//                y += (Sprite.SCALED_SIZE / Sprite.DEFAULT_SIZE);
-//            }
-//        }
+//
         x += xa;
-//        if ((int) x % Sprite.SCALED_SIZE <= (Sprite.SCALED_SIZE / Sprite.DEFAULT_SIZE)
-//                || (int) x % Sprite.SCALED_SIZE >= (Sprite.DEFAULT_SIZE - 1) *(Sprite.SCALED_SIZE / Sprite.DEFAULT_SIZE) ) {
-//            if (ya < 0) {
-//                x -= (Sprite.SCALED_SIZE / Sprite.DEFAULT_SIZE);
-//            } else {
-//                x += (Sprite.SCALED_SIZE / Sprite.DEFAULT_SIZE);
-//            }
-//        }
+//
     }
 
     /**
@@ -201,13 +193,16 @@ public class Bomber extends SetAnimatedEntity {
         } else if (size - (nextX % size) <= 3 * (size / defaultSize)) {
             nextY += size - (nextY % size);
         }
-        boolean result = BombermanGame.isFree(nextX, nextY);
-        return result;
+
+        return BombermanGame.isFree(nextX, nextY);
     }
 
     public void placeBomb() {
-        Bomb b= new Bomb(this.getXUnit(), this.getYUnit());
-        BombermanGame.bombs.add(b);
+        if(numberOfBombs>=1) {
+            Bomb b = new Bomb(this.getXUnit(), this.getYUnit());
+            BombermanGame.bombs.add(b);
+            numberOfBombs--;
+        }
 
     }
     @Override
@@ -234,7 +229,4 @@ public class Bomber extends SetAnimatedEntity {
         }
     }
 
-    public enum StatusDirection {
-        UP, RIGHT, DOWN, LEFT, STOP, DIE
-    }
 }

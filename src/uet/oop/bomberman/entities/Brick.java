@@ -10,6 +10,7 @@ public class Brick extends Entity {
 
     @Override
     public void update() {
+        if(isDead()) {
 
-    }
+        }
 }

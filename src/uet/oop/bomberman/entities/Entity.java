@@ -8,6 +8,8 @@ public abstract class Entity {
     //Tọa độ X tính từ góc trái trên trong Canvas
     protected int x;
     protected boolean isDead;
+    protected boolean remove;
+
     //Tọa độ Y tính từ góc trái trên trong Canvas
     protected int y;
     protected Image img;
@@ -35,6 +37,15 @@ public abstract class Entity {
     public boolean isDead() {
         return isDead;
     }
+
+    public boolean isRemove() {
+        return remove;
+    }
+
+    public void setRemove(boolean remove) {
+        this.remove = remove;
+    }
+
     public void setDead(boolean dead) {
         isDead = dead;
     }

@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class Bomb extends AnimatedEntity {
 
-
+    private int[] flameLength;
     protected int radius = 3;
     protected int _timeToExplode = 120; //2 seconds - thoi gian phat no
     public int _timeAfter = 0;// thoi gian de no = 20s
@@ -33,6 +33,15 @@ public class Bomb extends AnimatedEntity {
         this.addFrame(Sprite.bomb_2.getFxImage());
     }
 
+    public int[] getFlamesize() {
+        int[] length ={0,0,0,0};
+
+
+        for (int i=0; i<radius; i++) {
+
+        }
+        return length;
+    }
 
 //    protected boolean isExploded = false;
 
@@ -46,7 +55,7 @@ public class Bomb extends AnimatedEntity {
                 if (_timeAfter <= 18) {
                     _timeAfter++;
                 } else {
-                    setDead(true);
+                    setRemove(true);
                 }
             }
 
@@ -93,25 +102,41 @@ public class Bomb extends AnimatedEntity {
                 this.animate();
             }
             super.render(gc);
-        }
-        else {
-            for (int i = 1; i <= radius - 1; i++) {
-                gc.drawImage(vertical, super.getX(), super.getY() - i * 32);
-                gc.drawImage(vertical, super.getX(), super.getY() + i * 32);
-                gc.drawImage(horizontal, super.getX() - i * 32, super.getY());
-                gc.drawImage(horizontal, super.getX() + i * 32, super.getY());
-            }
-            gc.drawImage(topEnd, super.getX(), super.getY() - radius * 32);
-            gc.drawImage(bottomEnd, super.getX(), super.getY() + radius * 32);
-            gc.drawImage(rightEnd, super.getX() + radius * 32, super.getY());
-            gc.drawImage(leftEnd, super.getX() - radius * 32, super.getY());
+        } else {
             gc.drawImage(center, super.getX(), super.getY());
+            /**
+             * render flame theo 4 hướng trên, dưới, trái, phải
+             */
+            for (int i = 1; i <= radius; i++) {
+
+                if (BombermanGame.isFree(getX(), getY() - i*32)) {
+                    gc.drawImage(i==radius?topEnd:vertical , super.getX(), super.getY() - i * 32);
+                }
+                else break;
+            }
+            for (int i = 1; i <= radius; i++) {
+                if (BombermanGame.isFree(getX(), getY() + i*32)) {
+                    gc.drawImage(i==radius?bottomEnd:vertical , super.getX(), super.getY() + i * 32);
+                }
+                else break;
+            }
+            for (int i = 1; i <= radius; i++) {
+                if (BombermanGame.isFree(getX()-i*32, getY())) {
+                    gc.drawImage(i==radius?leftEnd:horizontal , super.getX() -i*32, super.getY());
+                }
+                else break;
+            }
+            for (int i = 1; i <= radius; i++) {
+                if (BombermanGame.isFree(getX()+i*32, getY())) {
+                    gc.drawImage(i==radius?rightEnd:horizontal , super.getX() +i*32, super.getY());
+                }
+                else break;
+            }
             updateImageFlames();
         }
-
-
-
     }
+
+
 
     public void setImage(String dir, Image img) {
         if (dir.equals("top")) {
