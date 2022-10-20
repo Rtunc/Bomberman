@@ -27,15 +27,16 @@ import java.util.List;
 
 
 public class BombermanGame extends Application {
+
     public static int WIDTH;
     private Camera camera;
     public static int HEIGHT;
     public Bomber bomberman;
     public static double fps;
     private static char[][] mapMatrix;
-    private final List<Entity> entities = new ArrayList<>();
+    public static final List<Entity> entities = new ArrayList<>();
     public static final List<Bomb> bombs = new ArrayList<>();
-    private final List<Entity> stillObjects = new ArrayList<>();
+    public static final List<Entity> stillObjects = new ArrayList<>();
     private GraphicsContext gc;
     private Canvas canvas;
 
@@ -198,8 +199,11 @@ public class BombermanGame extends Application {
 
                     }
                     case '*': {
+                        Entity object2 = new Grass(j, i, Sprite.grass.getFxImage());
+                        stillObjects.add(object2);
                         Brick object = new Brick(j, i, Sprite.brick.getFxImage());
                         stillObjects.add(object);
+
                         break;
 
                     }
@@ -207,14 +211,15 @@ public class BombermanGame extends Application {
                         Entity object = new Grass(j, i, Sprite.grass.getFxImage());
                         stillObjects.add(object);
                         Entity object1 = new Balloon(j, i, Sprite.balloom_left2.getFxImage());
-                        entities.add(object);
+                        entities.add(object1);
                         break;
                     }
                     case '2': {
-                        Entity object = new Grass(j, i, Sprite.grass.getFxImage());
-                        stillObjects.add(object);
                         Entity object2 = new Oneal(j, i, null);
                         entities.add(object2);
+                        Entity object = new Grass(j, i, Sprite.grass.getFxImage());
+                        stillObjects.add(object);
+
                         break;
                     }
 //
@@ -231,18 +236,38 @@ public class BombermanGame extends Application {
             }
         }
     }
-    public Entity getStillObjectAt(int Xunit, int Yunit) {
-        for (Entity b :
-                stillObjects) {
-            if (b instanceof Wall || b instanceof Brick) {
+    public static Entity getEntity(double x, double y) {
+        Iterator<Entity> bs = entities.iterator();
+
+        Entity b;
+        while(bs.hasNext()) {
+            b = bs.next();
+            if(b.getX() == (int)x && b.getY() == (int)y)
                 return b;
-            }
         }
         return null;
+    }
+    public static Entity FindEntity (int x, int y, List<Entity> CheckList) {
+
+        for (Entity check : CheckList) {
+            if (check.getXUnit() == x && check.getYUnit() == y)
+                return check;
+        }
+        return null;
+    }
+    public static List<Entity> FindList (int x, int y, List<Entity> CheckList) {
+        List<Entity> ResultList = new ArrayList<>();
+        for (Entity check : CheckList) {
+            if (check.getXUnit() == x && check.getYUnit() == y)
+                ResultList.add(check);
+        }
+        return ResultList;
     }
     public void update() {
         entities.forEach(Entity::update);
         Iterator<Bomb> itB = bombs.iterator();
+        Iterator<Entity> itE = entities.iterator();
+        Iterator<Entity> itS = stillObjects.iterator();
 
         while (itB.hasNext()) {
             Entity e = itB.next();
@@ -252,7 +277,20 @@ public class BombermanGame extends Application {
             }
 
         }
-        System.out.println(bombs.size());
+        while (itE.hasNext()) {
+            Entity e = itE.next();
+            if(e.isRemove()) {
+                itE.remove();
+            }
+
+        }
+        while (itS.hasNext()) {
+            Entity e = itS.next();
+            if(e.isRemove()) {
+                itS.remove();
+            }
+
+        }
 //      Tìm bomber
 //      TODO: có cách nào tìm bomber nhanh hơn sửa vào đây
         Bomber bomber = null;
@@ -288,9 +326,11 @@ public class BombermanGame extends Application {
     public void render() {
 
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
         stillObjects.forEach(g -> g.render(gc));
         bombs.forEach(g -> g.render(gc));
         entities.forEach(g -> g.render(gc));
+
     }
 }
 

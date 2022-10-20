@@ -217,21 +217,15 @@ public class Sprite {
     }
 
     public static Sprite movingSprite(Sprite normal, Sprite x1, Sprite x2, int animate, int time) {
+        int diff= (animate/time)%3 ;
 
-
-        if(animate>=0&&animate<=2) {
+        if(diff==0) {
             return normal;
         }
-        else if( animate<=5 ) {
+        else if( diff==1 ) {
             return x1;
         }
-        else if(animate<=8) {
-            return x2;
-        }
-        else if(animate<=11) {
-            return x1;
-        }
-        else return normal;
+        else return x2;
 
 //        if (calc / time == 0) {
 //            if (calc < diff) {
