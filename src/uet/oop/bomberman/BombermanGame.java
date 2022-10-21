@@ -15,7 +15,11 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import uet.oop.bomberman.entities.*;
-import uet.oop.bomberman.entities.bomb.*;
+import uet.oop.bomberman.entities.bomb.Bomb;
+import uet.oop.bomberman.entities.items.AddBomb;
+import uet.oop.bomberman.entities.items.PowerUps;
+import uet.oop.bomberman.entities.items.SpeedUp;
+import uet.oop.bomberman.graphics.Camera;
 import uet.oop.bomberman.graphics.Sprite;
 
 import java.io.BufferedReader;
@@ -35,6 +39,7 @@ public class BombermanGame extends Application {
     private static char[][] mapMatrix;
     public static final List<Entity> entities = new ArrayList<>();
     public static final List<Bomb> bombs = new ArrayList<>();
+    private final List<PowerUps> powerUps = new ArrayList<>();
     public static final List<Entity> stillObjects = new ArrayList<>();
     private GraphicsContext gc;
     private Canvas canvas;
@@ -211,8 +216,8 @@ public class BombermanGame extends Application {
         for (int i = 0; i < HEIGHT; i++) {
 
             for (int j = 0; j < WIDTH; j++) {
-                char chatactor = mapMatrix[i][j];
-                switch (chatactor) {
+                char character = mapMatrix[i][j];
+                switch (character) {
                     case '#': {
                         Wall object = new Wall(j, i, Sprite.wall.getFxImage());
                         stillObjects.add(object);
@@ -241,9 +246,22 @@ public class BombermanGame extends Application {
                         entities.add(object2);
                         break;
                     }
-//
-
-
+                    case 'b': {
+                        Brick object2 = new Brick(j, i, Sprite.brick.getFxImage());
+                        stillObjects.add(object2);
+                        AddBomb object = new AddBomb(j, i);
+                        powerUps.add(object);
+                        mapMatrix[i][j] = '*';
+                        break;
+                    }
+                    case 's': {
+                        Brick object2 = new Brick(j, i, Sprite.brick.getFxImage());
+                        stillObjects.add(object2);
+                        SpeedUp object = new SpeedUp(j, i);
+                        powerUps.add(object);
+                        mapMatrix[i][j] = '*';
+                        break;
+                    }
                     default: {
                         Entity object = new Grass(j, i, Sprite.grass.getFxImage());
                         stillObjects.add(object);
@@ -293,23 +311,16 @@ public class BombermanGame extends Application {
                 bomberman.setNumberOfBombs(bomberman.getNumberOfBombs() + 1);
             }
         }
-//      Tìm bomber
-//      TODO: có cách nào tìm bomber nhanh hơn sửa vào đây
-        Bomber bomber = null;
-        for (Entity b :
-                entities) {
-            if (b instanceof Bomber) {
-                bomber = (Bomber) b;
-            }
-        }
-
 //      Check enemy
         for (Entity o :
                 entities) {
             if (o instanceof Enemy) {
-                ((Enemy) o).checkBomber(bomber);
+                ((Enemy) o).checkBomber(bomberman);
             }
         }
+        powerUps.forEach(p -> p.checkBomber(bomberman));
+        powerUps.removeIf(Entity::isDead);
+
         TranslateTransition t = new TranslateTransition(Duration.millis(0.1), canvas);
         System.out.println(bomberman.getY());
         if (bomberman.getX() < 208) {
@@ -340,6 +351,7 @@ public class BombermanGame extends Application {
     public void render() {
 
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        powerUps.forEach(g -> g.render(gc));
         stillObjects.forEach(g -> g.render(gc));
         bombs.forEach(g -> g.render(gc));
         entities.forEach(g -> g.render(gc));

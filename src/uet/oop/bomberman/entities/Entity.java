@@ -7,12 +7,16 @@ import uet.oop.bomberman.graphics.Sprite;
 public abstract class Entity {
     //Tọa độ X tính từ góc trái trên trong Canvas
     protected int x;
-    protected boolean isDead=false;
-    protected boolean remove=false;
+    protected boolean isDead = false;
+    protected boolean remove = false;
 
     //Tọa độ Y tính từ góc trái trên trong Canvas
     protected int y;
     protected Image img;
+    /**
+     * isRender cho phép dừng việc render lại, mặc định là true
+     */
+    protected boolean isRender = true;
 
     //Khởi tạo đối tượng, chuyển từ tọa độ đơn vị sang tọa độ trong canvas
     public Entity(int xUnit, int yUnit, Image img) {
@@ -71,7 +75,9 @@ public abstract class Entity {
     }
 
     public void render(GraphicsContext gc) {
-        gc.drawImage(img, x, y);
+        if (isRender) {
+            gc.drawImage(img, x, y);
+        }
     }
 
     public void update() {
