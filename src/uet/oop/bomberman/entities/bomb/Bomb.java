@@ -14,7 +14,7 @@ import java.util.Map;
 public class Bomb extends AnimatedEntity {
 
 
-    protected int radius = 3;
+    protected int radius = 1;
     protected int _timeToExplode = 120; //2 seconds - thoi gian phat no
     public int _timeAfter = 0;// thoi gian de no = 20s
     protected List<Image> explodeFrame;

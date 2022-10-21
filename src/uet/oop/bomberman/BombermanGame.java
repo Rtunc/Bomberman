@@ -1,6 +1,5 @@
 package uet.oop.bomberman;
 
-import uet.oop.bomberman.graphics.Camera;
 import javafx.animation.AnimationTimer;
 import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
@@ -15,27 +14,31 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import uet.oop.bomberman.entities.*;
-import uet.oop.bomberman.entities.bomb.*;
+import uet.oop.bomberman.entities.bomb.Bomb;
+import uet.oop.bomberman.entities.items.AddBomb;
+import uet.oop.bomberman.entities.items.PowerUps;
+import uet.oop.bomberman.entities.items.SpeedUp;
+import uet.oop.bomberman.graphics.Camera;
 import uet.oop.bomberman.graphics.Sprite;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 
 public class BombermanGame extends Application {
+    public static final List<Bomb> bombs = new ArrayList<>();
     public static int WIDTH;
-    private Camera camera;
     public static int HEIGHT;
-    public Bomber bomberman;
     public static double fps;
     private static char[][] mapMatrix;
     private final List<Entity> entities = new ArrayList<>();
-    public static final List<Bomb> bombs = new ArrayList<>();
+    private final List<PowerUps> powerUps = new ArrayList<>();
     private final List<Entity> stillObjects = new ArrayList<>();
+    public Bomber bomberman;
+    private Camera camera;
     private GraphicsContext gc;
     private Canvas canvas;
 
@@ -132,8 +135,8 @@ public class BombermanGame extends Application {
 //        })
         // Them scene vao stage
         stage.setScene(scene);
-        stage.setHeight(13*32);
-        stage.setWidth(13*32);
+        stage.setHeight(13 * 32);
+        stage.setWidth(13 * 32);
         stage.show();
 
         AnimationTimer timer = new AnimationTimer() {
@@ -188,8 +191,8 @@ public class BombermanGame extends Application {
         for (int i = 0; i < HEIGHT; i++) {
 
             for (int j = 0; j < WIDTH; j++) {
-                char chatactor = mapMatrix[i][j];
-                switch (chatactor) {
+                char character = mapMatrix[i][j];
+                switch (character) {
                     case '#': {
                         Wall object = new Wall(j, i, Sprite.wall.getFxImage());
                         stillObjects.add(object);
@@ -216,9 +219,22 @@ public class BombermanGame extends Application {
                         entities.add(object2);
                         break;
                     }
-//
-
-
+                    case 'b': {
+                        Brick object2 = new Brick(j, i, Sprite.brick.getFxImage());
+                        stillObjects.add(object2);
+                        AddBomb object = new AddBomb(j, i);
+                        powerUps.add(object);
+                        mapMatrix[i][j] = '*';
+                        break;
+                    }
+                    case 's': {
+                        Brick object2 = new Brick(j, i, Sprite.brick.getFxImage());
+                        stillObjects.add(object2);
+                        SpeedUp object = new SpeedUp(j, i);
+                        powerUps.add(object);
+                        mapMatrix[i][j] = '*';
+                        break;
+                    }
                     default: {
                         Entity object = new Grass(j, i, Sprite.grass.getFxImage());
                         stillObjects.add(object);
@@ -237,36 +253,25 @@ public class BombermanGame extends Application {
 
     public void update() {
         entities.forEach(Entity::update);
-        Iterator<Bomb> itB = bombs.iterator();
 
-        while (itB.hasNext()) {
-            Entity e = itB.next();
-            if(e.isDead()) {
-                itB.remove();
-            }
-        }
-//      Tìm bomber
-//      TODO: có cách nào tìm bomber nhanh hơn sửa vào đây
-        Bomber bomber = null;
-        for (Entity b :
-                entities) {
-            if (b instanceof Bomber) {
-                bomber = (Bomber) b;
-            }
-        }
+        bombs.removeIf(Entity::isDead);
 
 //      Check enemy
         for (Entity o :
                 entities) {
             if (o instanceof Enemy) {
-                ((Enemy) o).checkBomber(bomber);
+                ((Enemy) o).checkBomber(bomberman);
             }
         }
-        TranslateTransition t = new TranslateTransition(Duration.millis(0.1),canvas);
+
+        powerUps.forEach(p -> p.checkBomber(bomberman));
+        powerUps.removeIf(Entity::isDead);
+
+        TranslateTransition t = new TranslateTransition(Duration.millis(0.1), canvas);
         t.setFromX(bomberman.getX());
-        t.setToX(120-bomberman.getX());
+        t.setToX(120 - bomberman.getX());
         t.setFromY(bomberman.getY());
-        t.setToY(120-bomberman.getY());
+        t.setToY(120 - bomberman.getY());
 
         t.setInterpolator(Interpolator.LINEAR);
         t.play();
@@ -280,6 +285,7 @@ public class BombermanGame extends Application {
     public void render() {
 
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        powerUps.forEach(g -> g.render(gc));
         stillObjects.forEach(g -> g.render(gc));
         bombs.forEach(g -> g.render(gc));
         entities.forEach(g -> g.render(gc));

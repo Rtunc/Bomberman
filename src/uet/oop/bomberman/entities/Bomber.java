@@ -11,30 +11,18 @@ import uet.oop.bomberman.graphics.Sprite;
 public class Bomber extends SetAnimatedEntity {
 
     /**
-     * Max tốc độ khi người chơi nhấn giữ
-     */
-    private static final int maxVelocity = 3;
-    private final int numberOfBombs = 1;
-    public boolean goNorth;
-    public boolean goSouth;
-    public boolean goEast;
-    public boolean goWest;
-    /**
      * Hướng nhập từ người chơi
      */
     public MovingDirection inputDirection;
-    private MovingDirection correctingDirection;
     /**
-     * isAlive còn sống không
+     * Max tốc độ khi người chơi nhấn giữ
      */
-    private boolean alive = true;
+    private int maxVelocity = 3;
+    private int numberOfBombs = 1;
     private int heart = 1;
     private int velocity = 1;
-
     private boolean autocorrecting = false;
-
     private int deadRecover = 120;
-
     /**
      * Khởi tạo Bomber với tập hình ảnh.
      *
@@ -76,6 +64,22 @@ public class Bomber extends SetAnimatedEntity {
         super(xUnit, yUnit, img);
     }
 
+    public void addMaxVelocity() {
+        maxVelocity++;
+    }
+
+    public int getNumberOfBombs() {
+        return numberOfBombs;
+    }
+
+    public void setNumberOfBombs(int numberOfBombs) {
+        this.numberOfBombs = numberOfBombs;
+    }
+
+    public void increaseNumberOfBombes() {
+        this.numberOfBombs++;
+    }
+
     /**
      * Nhả tốc độ
      */
@@ -115,7 +119,7 @@ public class Bomber extends SetAnimatedEntity {
         if (inputDirection == null) {
             return;
         }
-        if (!this.alive) {
+        if (this.isDead) {
             return;
         }
 
@@ -228,20 +232,20 @@ public class Bomber extends SetAnimatedEntity {
     /**
      * Cài đặt hành động khi người chơi chết
      */
-    public void setBomberDead() {
-        if (this.alive) {
+    public void setDead() {
+        if (!this.isDead) {
             super.setCurrentState(CollisionAction.DEAD);
             super.frame = 0;
-            this.alive = false;
+            this.isDead = true;
         }
     }
 
     private void bomberDead() {
-        if (!this.alive) {
+        if (this.isDead) {
             if (!isRender && heart > 0 && deadRecover == 0) {
                 heart--;
                 isRender = true;
-                alive = true;
+                this.isDead = false;
                 deadRecover = 120;
                 super.setCurrentState(MovingDirection.STAND);
             } else if (frame == MAX_ANIMATE - 1) {
@@ -253,7 +257,4 @@ public class Bomber extends SetAnimatedEntity {
         }
     }
 
-    public enum StatusDirection {
-        UP, RIGHT, DOWN, LEFT, STOP, DIE
-    }
 }

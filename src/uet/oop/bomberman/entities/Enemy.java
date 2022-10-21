@@ -21,7 +21,7 @@ public abstract class Enemy extends SetAnimatedEntity {
      */
     protected abstract void calculateMove();
 
-    protected void move(double xA, double yA) {
+    public void move(double xA, double yA) {
         x += xA;
         y += yA;
     }
@@ -32,7 +32,28 @@ public abstract class Enemy extends SetAnimatedEntity {
      */
     public void checkBomber(Bomber bomber) {
         if (this.collision(bomber.getX(), bomber.getY())) {
-            bomber.setBomberDead();
+            bomber.setDead();
+        }
+    }
+
+    public void setDead() {
+        if (!this.isDead) {
+            super.setCurrentState(CollisionAction.DEAD);
+            super.frame = 0;
+            this.isDead = true;
+        }
+    }
+
+    @Override
+    public void update() {
+        enemyDead();
+    }
+
+    private void enemyDead() {
+        if (this.isDead) {
+            if (frame == MAX_ANIMATE - 1) {
+                isRender = false;
+            }
         }
     }
 }
