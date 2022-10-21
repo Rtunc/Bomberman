@@ -1,16 +1,14 @@
 package uet.oop.bomberman.entities;
 
-import uet.oop.bomberman.entities.bomb.Bomb;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.BombermanGame;
+import uet.oop.bomberman.entities.bomb.Bomb;
 import uet.oop.bomberman.graphics.Sprite;
 
 /**
  * Bomber là người chơi
  */
-public class Bomber extends SetAnimatedEntity {
-
-
+public class Bomber extends SetAnimatedEntity implements AliveEntity {
     /**
      * Hướng nhập từ người chơi
      */
@@ -24,6 +22,10 @@ public class Bomber extends SetAnimatedEntity {
     private int velocity = 1;
     private boolean autocorrecting = false;
     private int deadRecover = 120;
+
+    private boolean withBomb = false;
+    private int lastBombX = 0;
+    private int lastBombY = 0;
 
     /**
      * Khởi tạo Bomber với tập hình ảnh.
@@ -64,6 +66,18 @@ public class Bomber extends SetAnimatedEntity {
      */
     public Bomber(int xUnit, int yUnit, Image img) {
         super(xUnit, yUnit, img);
+    }
+
+    public int getHeart() {
+        return heart;
+    }
+
+    public void setHeart(int heart) {
+        this.heart = heart;
+    }
+
+    public void increaseHeart() {
+        this.heart++;
     }
 
     public void addMaxVelocity() {
@@ -118,8 +132,6 @@ public class Bomber extends SetAnimatedEntity {
     protected void calculateMove() {
         // TODO: xử lý nhận tín hiệu điều khiển hướng đi từ _input và gọi move() để thực hiện di chuyển
         // TODO: nhớ cập nhật lại giá trị cờ _moving khi thay đổi trạng thái di chuyển
-
-
         if (inputDirection == null) {
             return;
         }
@@ -200,14 +212,20 @@ public class Bomber extends SetAnimatedEntity {
      */
     public boolean canMove(int nextX, int nextY) {
         boolean result = BombermanGame.isFree(nextX, nextY);
+        if (BombermanGame.getBomb(nextX, nextY) != null && !withBomb) {
+            result = false;
+        }
         return result;
     }
 
     public void placeBomb() {
-        if(numberOfBombs>=1) {
+        if (numberOfBombs >= 1) {
             Bomb b = new Bomb(this.getXUnit(), this.getYUnit());
             BombermanGame.bombs.add(b);
             numberOfBombs--;
+            withBomb = true;
+            lastBombX = b.getX();
+            lastBombY = b.getY();
         }
 
     }
@@ -217,6 +235,8 @@ public class Bomber extends SetAnimatedEntity {
 
         bomberDead();
         calculateMove();
+        if (withBomb && lastBombX != 0 && (Math.abs(lastBombX - x) > 32 || Math.abs(lastBombY - y) > 32))
+            withBomb = false;
 //
 //        detectPlaceBomb();
 
@@ -241,6 +261,8 @@ public class Bomber extends SetAnimatedEntity {
                 this.isDead = false;
                 deadRecover = 120;
                 super.setCurrentState(MovingDirection.STAND);
+            } else if (!isRender && heart == 0 && deadRecover == 0) {
+                BombermanGame.gameOver = true;
             } else if (frame == MAX_ANIMATE - 1) {
                 isRender = false;
             }

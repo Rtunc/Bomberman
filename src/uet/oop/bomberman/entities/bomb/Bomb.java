@@ -3,28 +3,22 @@ package uet.oop.bomberman.entities.bomb;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.BombermanGame;
-
-
-
-import uet.oop.bomberman.entities.AnimatedEntity;
-import uet.oop.bomberman.entities.Brick;
-import uet.oop.bomberman.entities.Entity;
-import uet.oop.bomberman.entities.Wall;
+import uet.oop.bomberman.entities.*;
 import uet.oop.bomberman.graphics.Sprite;
 
 import java.util.List;
-import java.util.Map;
 
 public class Bomb extends AnimatedEntity {
 
-    private int flameLengthLeft=0;
-    private int flameLengthTop=0;
-    private int flameLengthRight=0;
-    private int flameLengthDown=0;
+    public int _timeAfter = 0;// thoi gian de no = 20s
+    public boolean isExploded = false;
     protected int radius = 3;
     protected int _timeToExplode = 120; //2 seconds - thoi gian phat no
-    public int _timeAfter = 0;// thoi gian de no = 20s
     protected List<Image> explodeFrame;
+    private int flameLengthLeft = 0;
+    private int flameLengthTop = 0;
+    private int flameLengthRight = 0;
+    private int flameLengthDown = 0;
     private Image horizontal = Sprite.explosion_horizontal.getFxImage();
     private Image vertical = Sprite.explosion_vertical.getFxImage();
     private Image topEnd = Sprite.explosion_vertical_top_last.getFxImage();
@@ -32,7 +26,6 @@ public class Bomb extends AnimatedEntity {
     private Image rightEnd = Sprite.explosion_horizontal_right_last.getFxImage();
     private Image leftEnd = Sprite.explosion_horizontal_left_last.getFxImage();
     private Image center = Sprite.bomb_exploded.getFxImage();
-    public boolean isExploded = false;
 
     public Bomb(int xUnit, int yUnit) {
         super(xUnit, yUnit, Sprite.bomb.getFxImage());
@@ -64,13 +57,19 @@ public class Bomb extends AnimatedEntity {
 //    protected boolean isExploded = false;
 
     public void update() {
+        flameLengthTop = 0;
+        flameLengthDown = 0;
+        flameLengthRight = 0;
+        flameLengthLeft = 0;
         if (_timeToExplode > 0)
             _timeToExplode--;
         else {
             if (!isExploded) {
+                isExploded = true;
                 explode();
             } else {
                 if (_timeAfter <= 18) {
+                    explode();
                     _timeAfter++;
                 } else {
                     setRemove(true);
@@ -89,7 +88,7 @@ public class Bomb extends AnimatedEntity {
         setImage("vertical",
                 Sprite.movingSprite(Sprite.explosion_vertical,
                         Sprite.explosion_vertical1,
-                        Sprite.explosion_vertical2, _timeAfter, 6). getFxImage());
+                        Sprite.explosion_vertical2, _timeAfter, 6).getFxImage());
         setImage("top",
                 Sprite.movingSprite(Sprite.explosion_vertical_top_last,
                         Sprite.explosion_vertical_top_last1,
@@ -122,11 +121,11 @@ public class Bomb extends AnimatedEntity {
             super.render(gc);
         } else {
             gc.drawImage(center, super.getX(), super.getY());
-            /**
-             * render flame theo 4 hướng trên, dưới, trái, phải
+            /*
+              render flame theo 4 hướng trên, dưới, trái, phải
              */
             for (int i = 1; i <= flameLengthTop; i++) {
-                gc.drawImage(i==radius?topEnd:vertical , super.getX(), super.getY() - i * 32);
+                gc.drawImage(i == radius ? topEnd : vertical, super.getX(), super.getY() - i * 32);
             }
 
             for (int i = 1; i <= flameLengthDown; i++) {
@@ -134,15 +133,14 @@ public class Bomb extends AnimatedEntity {
 
             }
             for (int i = 1; i <= flameLengthLeft; i++) {
-                    gc.drawImage(i == radius ? leftEnd : horizontal, super.getX() - i * 32, super.getY());
+                gc.drawImage(i == radius ? leftEnd : horizontal, super.getX() - i * 32, super.getY());
             }
             for (int i = 1; i <= flameLengthRight; i++) {
-                    gc.drawImage(i == radius ? rightEnd : horizontal, super.getX() + i * 32, super.getY());
+                gc.drawImage(i == radius ? rightEnd : horizontal, super.getX() + i * 32, super.getY());
             }
             updateImageFlames();
         }
     }
-
 
 
     public void setImage(String dir, Image img) {
@@ -175,104 +173,110 @@ public class Bomb extends AnimatedEntity {
      * TODO: Kill enemy
      */
     protected void explode() {//nổ
-        isExploded = true;
 
 
-        for (int i=1; i<=radius; i++) {
-            List<Entity> checkList = BombermanGame.FindList(this.getXUnit(), this.getYUnit()-i, BombermanGame.stillObjects);
-            List<Entity> entityList = BombermanGame.FindList(this.getXUnit(), this.getYUnit()-i, BombermanGame.entities);
+        for (int i = 1; i <= radius; i++) {
+            List<Entity> checkList = BombermanGame.FindList(this.getXUnit(), this.getYUnit() - i, BombermanGame.stillObjects);
+            List<Entity> entityList = BombermanGame.FindList(this.getXUnit(), this.getYUnit() - i, BombermanGame.entities);
             boolean stop = false;
             for (Entity check : checkList) {
-                if(check instanceof Wall) {
+                if (check instanceof Wall) {
                     stop = true;
-                }
-                else if(check instanceof Brick) {
+                } else if (check instanceof Brick) {
                     check.setDead(true);
                     stop = true;
                 }
             }
             for (Entity enemy : entityList) {
-                enemy.setDead(true);
+                if (enemy instanceof AliveEntity) {
+                    ((AliveEntity) enemy).setDead();
+                }
             }
-            if(stop) {
+            if (stop) {
                 break;
-            }
-            else {
-                flameLengthTop++;
+            } else {
+                if (flameLengthTop < radius) {
+                    flameLengthTop++;
+                }
             }
         }
-        for (int i=1; i<=radius; i++) {
-            List<Entity> checkList = BombermanGame.FindList(this.getXUnit(), this.getYUnit()+i, BombermanGame.stillObjects);
-            List<Entity> entityList = BombermanGame.FindList(this.getXUnit(), this.getYUnit()+i, BombermanGame.entities);
+        for (int i = 1; i <= radius; i++) {
+            List<Entity> checkList = BombermanGame.FindList(this.getXUnit(), this.getYUnit() + i, BombermanGame.stillObjects);
+            List<Entity> entityList = BombermanGame.FindList(this.getXUnit(), this.getYUnit() + i, BombermanGame.entities);
             boolean stop = false;
             for (Entity check : checkList) {
-                if(check instanceof Wall) {
+                if (check instanceof Wall) {
                     stop = true;
-                }
-                else if(check instanceof Brick) {
+                } else if (check instanceof Brick) {
                     check.setDead(true);
                     stop = true;
                 }
             }
             for (Entity enemy : entityList) {
-                enemy.setDead(true);
+                if (enemy instanceof AliveEntity) {
+                    ((AliveEntity) enemy).setDead();
+                }
             }
-            if(stop) {
+            if (stop) {
                 break;
-            }
-            else {
-                flameLengthDown++;
+            } else {
+                if (flameLengthDown < radius) {
+                    flameLengthDown++;
+                }
             }
         }
-        for (int i=1; i<=radius; i++) {
-            List<Entity> checkList = BombermanGame.FindList(this.getXUnit()+i, this.getYUnit(), BombermanGame.stillObjects);
-            List<Entity> entityList = BombermanGame.FindList(this.getXUnit()+i, this.getYUnit(), BombermanGame.entities);
+        for (int i = 1; i <= radius; i++) {
+            List<Entity> checkList = BombermanGame.FindList(this.getXUnit() + i, this.getYUnit(), BombermanGame.stillObjects);
+            List<Entity> entityList = BombermanGame.FindList(this.getXUnit() + i, this.getYUnit(), BombermanGame.entities);
             boolean stop = false;
             for (Entity check : checkList) {
-                if(check instanceof Wall) {
+                if (check instanceof Wall) {
                     stop = true;
-                }
-                else if(check instanceof Brick) {
+                } else if (check instanceof Brick) {
                     check.setDead(true);
                     stop = true;
                 }
             }
             for (Entity enemy : entityList) {
-                enemy.setDead(true);
+                if (enemy instanceof AliveEntity) {
+                    ((AliveEntity) enemy).setDead();
+                }
             }
-            if(stop) {
+            if (stop) {
                 break;
-            }
-            else {
-                flameLengthRight++;
+            } else {
+                if (flameLengthRight < radius) {
+                    flameLengthRight++;
+                }
             }
         }
-        for (int i=1; i<=radius; i++) {
-            List<Entity> checkList = BombermanGame.FindList(this.getXUnit()-i, this.getYUnit(), BombermanGame.stillObjects);
-            List<Entity> entityList = BombermanGame.FindList(this.getXUnit()-i, this.getYUnit(), BombermanGame.entities);
+        for (int i = 1; i <= radius; i++) {
+            List<Entity> checkList = BombermanGame.FindList(this.getXUnit() - i, this.getYUnit(), BombermanGame.stillObjects);
+            List<Entity> entityList = BombermanGame.FindList(this.getXUnit() - i, this.getYUnit(), BombermanGame.entities);
             boolean stop = false;
             for (Entity check : checkList) {
-                if(check instanceof Wall) {
+                if (check instanceof Wall) {
                     stop = true;
-                }
-                else if(check instanceof Brick) {
+                } else if (check instanceof Brick) {
                     check.setDead(true);
                     stop = true;
                 }
             }
             for (Entity enemy : entityList) {
-                enemy.setDead(true);
+                if (enemy instanceof AliveEntity) {
+                    ((AliveEntity) enemy).setDead();
+                }
             }
-            if(stop) {
+            if (stop) {
                 break;
-            }
-            else {
-                flameLengthLeft++;
+            } else {
+                if (flameLengthLeft < radius) {
+                    flameLengthLeft++;
+                }
             }
         }
 
     }
-
 
 
 }

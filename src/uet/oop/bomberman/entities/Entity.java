@@ -9,7 +9,6 @@ public abstract class Entity {
     protected int x;
     protected boolean isDead = false;
     protected boolean remove = false;
-
     //Tọa độ Y tính từ góc trái trên trong Canvas
     protected int y;
     protected Image img;
