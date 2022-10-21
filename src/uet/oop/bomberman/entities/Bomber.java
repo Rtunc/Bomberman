@@ -9,7 +9,6 @@ import uet.oop.bomberman.graphics.Sprite;
  * Bomber là người chơi
  */
 public class Bomber extends SetAnimatedEntity {
-
     /**
      * Hướng nhập từ người chơi
      */
@@ -180,23 +179,9 @@ public class Bomber extends SetAnimatedEntity {
     public void move(double xa, double ya) {
 //        TODO: xử lý input cho việc nhân vật chen vào giữa đơn giản hơn
         y += ya;
-//        if ((int) y % Sprite.SCALED_SIZE <= (Sprite.SCALED_SIZE / Sprite.DEFAULT_SIZE)
-//        || (int) y % Sprite.SCALED_SIZE >= (Sprite.DEFAULT_SIZE - 1) *(Sprite.SCALED_SIZE / Sprite.DEFAULT_SIZE) ) {
-//            if (ya < 0) {
-//                y -= (Sprite.SCALED_SIZE / Sprite.DEFAULT_SIZE);
-//            } else {
-//                y += (Sprite.SCALED_SIZE / Sprite.DEFAULT_SIZE);
-//            }
-//        }
+//
         x += xa;
-//        if ((int) x % Sprite.SCALED_SIZE <= (Sprite.SCALED_SIZE / Sprite.DEFAULT_SIZE)
-//                || (int) x % Sprite.SCALED_SIZE >= (Sprite.DEFAULT_SIZE - 1) *(Sprite.SCALED_SIZE / Sprite.DEFAULT_SIZE) ) {
-//            if (ya < 0) {
-//                x -= (Sprite.SCALED_SIZE / Sprite.DEFAULT_SIZE);
-//            } else {
-//                x += (Sprite.SCALED_SIZE / Sprite.DEFAULT_SIZE);
-//            }
-//        }
+//
     }
 
     /**
@@ -214,8 +199,11 @@ public class Bomber extends SetAnimatedEntity {
     }
 
     public void placeBomb() {
-        Bomb b = new Bomb(this.getXUnit(), this.getYUnit());
-        BombermanGame.bombs.add(b);
+        if(numberOfBombs>=1) {
+            Bomb b = new Bomb(this.getXUnit(), this.getYUnit());
+            BombermanGame.bombs.add(b);
+            numberOfBombs--;
+        }
 
     }
 

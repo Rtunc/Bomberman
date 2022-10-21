@@ -25,20 +25,22 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 
 public class BombermanGame extends Application {
-    public static final List<Bomb> bombs = new ArrayList<>();
+
     public static int WIDTH;
+    private Camera camera;
     public static int HEIGHT;
+    public Bomber bomberman;
     public static double fps;
     private static char[][] mapMatrix;
-    private final List<Entity> entities = new ArrayList<>();
+    public static final List<Entity> entities = new ArrayList<>();
+    public static final List<Bomb> bombs = new ArrayList<>();
+    public static final List<Entity> stillObjects = new ArrayList<>();
     private final List<PowerUps> powerUps = new ArrayList<>();
-    private final List<Entity> stillObjects = new ArrayList<>();
-    public Bomber bomberman;
-    private Camera camera;
     private GraphicsContext gc;
     private Canvas canvas;
 
@@ -49,23 +51,46 @@ public class BombermanGame extends Application {
 
     public static boolean isFree(int nextX, int nextY) {
         int size = Sprite.SCALED_SIZE;
-        int nextX_1 = nextX / size;
-        int nextY_1 = nextY / size;
+        int nextX_1 = (nextX+2) / size;
+        int nextY_1 = (nextY+2) / size;
 
         int nextX_2 = (nextX + size - 2) / size;
-        int nextY_2 = nextY / size;
+        int nextY_2 = (nextY+2) / size;
 
-        int nextX_3 = nextX / size;
+        int nextX_3 = (nextX+2) / size;
         int nextY_3 = (nextY + size - 2) / size;
 
         int nextX_4 = (nextX + size - 2) / size;
         int nextY_4 = (nextY + size - 2) / size;
-        return !((mapMatrix[nextY_1][nextX_1] == '*' || mapMatrix[nextY_1][nextX_1] == '#') ||
-                (mapMatrix[nextY_2][nextX_2] == '*' || mapMatrix[nextY_2][nextX_2] == '#') ||
-                (mapMatrix[nextY_3][nextX_3] == '*' || mapMatrix[nextY_3][nextX_3] == '#') ||
-                (mapMatrix[nextY_4][nextX_4] == '*' || mapMatrix[nextY_4][nextX_4] == '#'));
 
+        List<Entity> ListStillObject1 =BombermanGame.FindList(nextX_1, nextY_1, BombermanGame.stillObjects);
+        List<Entity> ListStillObject2 =BombermanGame.FindList(nextX_2, nextY_2, BombermanGame.stillObjects);
+        List<Entity> ListStillObject3 =BombermanGame.FindList(nextX_3, nextY_3, BombermanGame.stillObjects);
+        List<Entity> ListStillObject4 =BombermanGame.FindList(nextX_4, nextY_4, BombermanGame.stillObjects);
+
+        for( Entity check : ListStillObject1) {
+            if(check instanceof Wall || check instanceof Brick) {
+                return false;
+            }
+        }
+        for( Entity check : ListStillObject2) {
+            if(check instanceof Wall || check instanceof Brick) {
+                return false;
+            }
+        }
+        for( Entity check : ListStillObject3) {
+            if(check instanceof Wall || check instanceof Brick) {
+                return false;
+            }
+        }
+        for( Entity check : ListStillObject4) {
+            if(check instanceof Wall || check instanceof Brick) {
+                return false;
+            }
+        }
+        return true;
     }
+
 
     @Override
     public void start(Stage stage) {
@@ -200,8 +225,11 @@ public class BombermanGame extends Application {
 
                     }
                     case '*': {
+                        Entity object2 = new Grass(j, i, Sprite.grass.getFxImage());
+                        stillObjects.add(object2);
                         Brick object = new Brick(j, i, Sprite.brick.getFxImage());
                         stillObjects.add(object);
+
                         break;
 
                     }
@@ -246,15 +274,61 @@ public class BombermanGame extends Application {
             }
         }
     }
+    public static Entity getEntity(double x, double y) {
+        Iterator<Entity> bs = entities.iterator();
 
-    public void restartGame() {
-
+        Entity b;
+        while(bs.hasNext()) {
+            b = bs.next();
+            if(b.getX() == (int)x && b.getY() == (int)y)
+                return b;
+        }
+        return null;
     }
+    public static Entity FindEntity (int x, int y, List<Entity> CheckList) {
 
+        for (Entity check : CheckList) {
+            if (check.getXUnit() == x && check.getYUnit() == y)
+                return check;
+        }
+        return null;
+    }
+    public static List<Entity> FindList (int x, int y, List<Entity> CheckList) {
+        List<Entity> ResultList = new ArrayList<>();
+        for (Entity check : CheckList) {
+            if (check.getXUnit() == x && check.getYUnit() == y)
+                ResultList.add(check);
+        }
+        return ResultList;
+    }
     public void update() {
         entities.forEach(Entity::update);
+        Iterator<Bomb> itB = bombs.iterator();
+        Iterator<Entity> itE = entities.iterator();
+        Iterator<Entity> itS = stillObjects.iterator();
 
-        bombs.removeIf(Entity::isDead);
+        while (itB.hasNext()) {
+            Entity e = itB.next();
+            if (e.isRemove()) {
+                itB.remove();
+                bomberman.setNumberOfBombs(bomberman.getNumberOfBombs() + 1);
+            }
+
+        }
+        while (itE.hasNext()) {
+            Entity e = itE.next();
+            if (e.isRemove()) {
+                itE.remove();
+            }
+
+        }
+        while (itS.hasNext()) {
+            Entity e = itS.next();
+            if (e.isRemove()) {
+                itS.remove();
+            }
+
+        }
 
 //      Check enemy
         for (Entity o :
@@ -263,15 +337,26 @@ public class BombermanGame extends Application {
                 ((Enemy) o).checkBomber(bomberman);
             }
         }
-
         powerUps.forEach(p -> p.checkBomber(bomberman));
         powerUps.removeIf(Entity::isDead);
 
         TranslateTransition t = new TranslateTransition(Duration.millis(0.1), canvas);
-        t.setFromX(bomberman.getX());
-        t.setToX(120 - bomberman.getX());
-        t.setFromY(bomberman.getY());
-        t.setToY(120 - bomberman.getY());
+        System.out.println(bomberman.getY());
+        if (bomberman.getX() < 208) {
+            t.setToX(0);
+        } else if (bomberman.getX() >800) {
+            t.setToX(-592);
+        } else {
+            t.setToX(16*13 - bomberman.getX());
+        }
+
+        if (bomberman.getY() < 169) {
+            t.setToY(0);
+        } else if (bomberman.getY() > 208) {
+            t.setToY(-37);
+        } else {
+            t.setToY(13*13 - bomberman.getY());
+        }
 
         t.setInterpolator(Interpolator.LINEAR);
         t.play();
@@ -289,6 +374,7 @@ public class BombermanGame extends Application {
         stillObjects.forEach(g -> g.render(gc));
         bombs.forEach(g -> g.render(gc));
         entities.forEach(g -> g.render(gc));
+
     }
 }
 
