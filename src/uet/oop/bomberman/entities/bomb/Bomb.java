@@ -57,6 +57,10 @@ public class Bomb extends AnimatedEntity {
 //    protected boolean isExploded = false;
 
     public void update() {
+        flameLengthTop = 0;
+        flameLengthDown = 0;
+        flameLengthRight = 0;
+        flameLengthLeft = 0;
         if (_timeToExplode > 0)
             _timeToExplode--;
         else {
