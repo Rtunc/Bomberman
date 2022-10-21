@@ -160,8 +160,8 @@ public class BombermanGame extends Application {
 //        })
         // Them scene vao stage
         stage.setScene(scene);
-        stage.setHeight(13*32);
-        stage.setWidth(13*32);
+        stage.setHeight(13 * 32);
+        stage.setWidth(13 * 32);
         stage.show();
 
         AnimationTimer timer = new AnimationTimer() {
