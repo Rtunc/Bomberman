@@ -1,39 +1,31 @@
 package uet.oop.bomberman.entities;
 
-import uet.oop.bomberman.entities.bomb.Bomb;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.BombermanGame;
+import uet.oop.bomberman.entities.bomb.Bomb;
 import uet.oop.bomberman.graphics.Sprite;
 
 /**
  * Bomber là người chơi
  */
-public class Bomber extends SetAnimatedEntity {
-
-    /**
-     * Max tốc độ khi người chơi nhấn giữ
-     */
-    private static final int maxVelocity = 3;
-
+public class Bomber extends SetAnimatedEntity implements AliveEntity {
     /**
      * Hướng nhập từ người chơi
      */
     public MovingDirection inputDirection;
     /**
-     * isAlive còn sống không
+     * Max tốc độ khi người chơi nhấn giữ
      */
-    private boolean alive = true;
+    private int maxVelocity = 3;
     private int numberOfBombs = 1;
+    private int flameRadius = 1;
+    private int heart = 1;
     private int velocity = 1;
-
-
-    public int getNumberOfBombs() {
-        return numberOfBombs;
-    }
-
-    public void setNumberOfBombs(int numberOfBombs) {
-        this.numberOfBombs = numberOfBombs;
-    }
+    private boolean autocorrecting = false;
+    private int deadRecover = 120;
+    private boolean withBomb = false;
+    private int lastBombX = 0;
+    private int lastBombY = 0;
 
     /**
      * Khởi tạo Bomber với tập hình ảnh.
@@ -68,12 +60,51 @@ public class Bomber extends SetAnimatedEntity {
 
         super.setCurrentState(MovingDirection.STAND);
     }
-
     /**
      * Chỉ cho debug, không hiệu ứng
      */
     public Bomber(int xUnit, int yUnit, Image img) {
         super(xUnit, yUnit, img);
+    }
+
+    public int getFlameRadius() {
+        return flameRadius;
+    }
+
+    public void setFlameRadius(int flameRadius) {
+        this.flameRadius = flameRadius;
+    }
+
+    public void increaseFlameRadius() {
+        this.flameRadius++;
+    }
+
+    public int getHeart() {
+        return heart;
+    }
+
+    public void setHeart(int heart) {
+        this.heart = heart;
+    }
+
+    public void increaseHeart() {
+        this.heart++;
+    }
+
+    public void addMaxVelocity() {
+        maxVelocity++;
+    }
+
+    public int getNumberOfBombs() {
+        return numberOfBombs;
+    }
+
+    public void setNumberOfBombs(int numberOfBombs) {
+        this.numberOfBombs = numberOfBombs;
+    }
+
+    public void increaseNumberOfBombes() {
+        this.numberOfBombs++;
     }
 
     /**
@@ -99,6 +130,7 @@ public class Bomber extends SetAnimatedEntity {
      * @param inputDirection hướng di chuyển
      */
     public void setInputDirection(MovingDirection inputDirection) {
+        if (autocorrecting) return;
         this.inputDirection = inputDirection;
         if (inputDirection == null) {
             super.setCurrentState(MovingDirection.STAND);
@@ -111,12 +143,10 @@ public class Bomber extends SetAnimatedEntity {
     protected void calculateMove() {
         // TODO: xử lý nhận tín hiệu điều khiển hướng đi từ _input và gọi move() để thực hiện di chuyển
         // TODO: nhớ cập nhật lại giá trị cờ _moving khi thay đổi trạng thái di chuyển
-
-
         if (inputDirection == null) {
             return;
         }
-        if (!this.alive) {
+        if (this.isDead) {
             return;
         }
 
@@ -140,6 +170,36 @@ public class Bomber extends SetAnimatedEntity {
         if (xVel != 0 || yVel != 0) {
             if (canMove(x + xVel, y + yVel)) {
                 move(xVel, yVel);
+                autocorrecting = false;
+            } else {
+                int size = Sprite.SCALED_SIZE;
+                int scaled = size / Sprite.DEFAULT_SIZE;
+                int nextX = x + xVel;
+                int nextY = y + yVel;
+                int modX = nextX % size;
+                int modY = nextY % size;
+                if (size - modX <= 10 * scaled) {
+                    if (canMove(nextX + (size - modX), nextY) && xVel == 0 && modX != 0) {
+                        autocorrecting = true;
+                        move(1, 0);
+                    }
+                } else if (modX <= 10 * scaled) {
+                    if (canMove(nextX - modX, nextY) && xVel == 0 && modX != 0) {
+                        autocorrecting = true;
+                        move(-1, 0);
+                    }
+                }
+                if (size - modY <= 10 * scaled) {
+                    if (canMove(nextX, nextY + (size - modY)) && yVel == 0 && modY != 0) {
+                        autocorrecting = true;
+                        move(0, 1);
+                    }
+                } else if (modY <= 10 * scaled) {
+                    if (canMove(nextX, nextY - modY) && yVel == 0 && modY != 0) {
+                        autocorrecting = true;
+                        move(0, -1);
+                    }
+                }
             }
         }
     }
@@ -162,35 +222,32 @@ public class Bomber extends SetAnimatedEntity {
      * @return có di chuyển được không
      */
     public boolean canMove(int nextX, int nextY) {
-        int size = Sprite.SCALED_SIZE;
-        int defaultSize = Sprite.DEFAULT_SIZE;
-        if (nextX % size < size - (nextX % size) && nextX % size <= 3 * (size / defaultSize)) {
-            nextX -= nextX % size;
-        } else if (size - (nextX % size) <= 3 * (size / defaultSize)) {
-            nextX += size - (nextX % size);
+        boolean result = BombermanGame.isFree(nextX, nextY);
+        if (BombermanGame.getBomb(nextX, nextY) != null && !withBomb) {
+            result = false;
         }
-        if (nextY % size < size - (nextY % size) && nextY % size <= 3 * (size / defaultSize)) {
-            nextY -= nextY % size;
-        } else if (size - (nextX % size) <= 3 * (size / defaultSize)) {
-            nextY += size - (nextY % size);
-        }
-
-        return BombermanGame.isFree(nextX, nextY);
+        return result;
     }
 
     public void placeBomb() {
-        if(numberOfBombs>=1) {
-            Bomb b = new Bomb(this.getXUnit(), this.getYUnit());
+        if (numberOfBombs >= 1) {
+            Bomb b = new Bomb(this.getXUnit(), this.getYUnit(), flameRadius);
             BombermanGame.bombs.add(b);
             numberOfBombs--;
+            withBomb = true;
+            lastBombX = b.getX();
+            lastBombY = b.getY();
         }
 
     }
+
     @Override
     public void update() {
 
-
+        bomberDead();
         calculateMove();
+        if (withBomb && lastBombX != 0 && (Math.abs(lastBombX - x) > 32 || Math.abs(lastBombY - y) > 32))
+            withBomb = false;
 //
 //        detectPlaceBomb();
 
@@ -199,14 +256,30 @@ public class Bomber extends SetAnimatedEntity {
     /**
      * Cài đặt hành động khi người chơi chết
      */
-    public void setBomberDead() {
-        if (this.alive) {
+    public void setDead() {
+        if (!this.isDead) {
             super.setCurrentState(CollisionAction.DEAD);
             super.frame = 0;
-            this.alive = false;
+            this.isDead = true;
         }
-        if (frame == MAX_ANIMATE - 1) {
-            isRender = false;
+    }
+
+    private void bomberDead() {
+        if (this.isDead) {
+            if (!isRender && heart > 0 && deadRecover == 0) {
+                heart--;
+                isRender = true;
+                this.isDead = false;
+                deadRecover = 120;
+                super.setCurrentState(MovingDirection.STAND);
+            } else if (!isRender && heart == 0 && deadRecover == 0) {
+                BombermanGame.gameOver = true;
+            } else if (frame == MAX_ANIMATE - 1) {
+                isRender = false;
+            }
+            if (!isRender) {
+                deadRecover--;
+            }
         }
     }
 
