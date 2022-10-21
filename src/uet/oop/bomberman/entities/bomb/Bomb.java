@@ -12,7 +12,7 @@ public class Bomb extends AnimatedEntity {
 
     public int _timeAfter = 0;// thoi gian de no = 20s
     public boolean isExploded = false;
-    protected int radius = 3;
+    protected int radius = 1;
     protected int _timeToExplode = 120; //2 seconds - thoi gian phat no
     protected List<Image> explodeFrame;
     private int flameLengthLeft = 0;
@@ -27,10 +27,11 @@ public class Bomb extends AnimatedEntity {
     private Image leftEnd = Sprite.explosion_horizontal_left_last.getFxImage();
     private Image center = Sprite.bomb_exploded.getFxImage();
 
-    public Bomb(int xUnit, int yUnit) {
+    public Bomb(int xUnit, int yUnit, int radius) {
         super(xUnit, yUnit, Sprite.bomb.getFxImage());
         this.addFrame(Sprite.bomb_1.getFxImage());
         this.addFrame(Sprite.bomb_2.getFxImage());
+        this.radius = radius;
     }
 
 //    protected int caculateFlameSize(int Status) {

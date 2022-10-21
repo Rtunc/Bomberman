@@ -16,6 +16,7 @@ public abstract class PowerUps extends Entity {
         if (this.collision(bomber.getX(), bomber.getY())) {
             interactWithBomber(bomber);
             this.isDead = true;
+            super.setRemove(true);
             this.isRender = false;
         }
     }

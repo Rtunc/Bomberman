@@ -21,6 +21,10 @@ public class Balloom extends Enemy {
         super.addFrame(Sprite.balloom_right3.getFxImage(), MovingDirection.RIGHT);
 
         super.addFrame(Sprite.balloom_dead.getFxImage(), CollisionAction.DEAD);
+        super.addFrame(Sprite.mob_dead1.getFxImage(), CollisionAction.DEAD);
+        super.addFrame(Sprite.mob_dead2.getFxImage(), CollisionAction.DEAD);
+        super.addFrame(Sprite.mob_dead3.getFxImage(), CollisionAction.DEAD);
+
         super.setCurrentState(MovingDirection.STAND);
     }
 

@@ -18,11 +18,11 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
      */
     private int maxVelocity = 3;
     private int numberOfBombs = 1;
+    private int flameRadius = 1;
     private int heart = 1;
     private int velocity = 1;
     private boolean autocorrecting = false;
     private int deadRecover = 120;
-
     private boolean withBomb = false;
     private int lastBombX = 0;
     private int lastBombY = 0;
@@ -60,12 +60,23 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
 
         super.setCurrentState(MovingDirection.STAND);
     }
-
     /**
      * Chỉ cho debug, không hiệu ứng
      */
     public Bomber(int xUnit, int yUnit, Image img) {
         super(xUnit, yUnit, img);
+    }
+
+    public int getFlameRadius() {
+        return flameRadius;
+    }
+
+    public void setFlameRadius(int flameRadius) {
+        this.flameRadius = flameRadius;
+    }
+
+    public void increaseFlameRadius() {
+        this.flameRadius++;
     }
 
     public int getHeart() {
@@ -220,7 +231,7 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
 
     public void placeBomb() {
         if (numberOfBombs >= 1) {
-            Bomb b = new Bomb(this.getXUnit(), this.getYUnit());
+            Bomb b = new Bomb(this.getXUnit(), this.getYUnit(), flameRadius);
             BombermanGame.bombs.add(b);
             numberOfBombs--;
             withBomb = true;
