@@ -4,6 +4,7 @@ import javafx.animation.AnimationTimer;
 import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -36,6 +37,10 @@ public class BombermanGame extends Application {
     public static int HEIGHT;
     public Bomber bomberman;
     public static double fps;
+
+    public static boolean victory = false;
+    public static boolean gameOver = false;
+
     private static char[][] mapMatrix;
     public static final List<Entity> entities = new ArrayList<>();
     public static final List<Bomb> bombs = new ArrayList<>();
@@ -51,17 +56,17 @@ public class BombermanGame extends Application {
 
     public static boolean isFree(int nextX, int nextY) {
         int size = Sprite.SCALED_SIZE;
-        int nextX_1 = (nextX+2) / size;
-        int nextY_1 = (nextY+2) / size;
+        int nextX_1 = (nextX+1) / size;
+        int nextY_1 = (nextY+1) / size;
 
-        int nextX_2 = (nextX + size - 2) / size;
-        int nextY_2 = (nextY+2) / size;
+        int nextX_2 = (nextX + size - 1) / size;
+        int nextY_2 = (nextY+1) / size;
 
-        int nextX_3 = (nextX+2) / size;
-        int nextY_3 = (nextY + size - 2) / size;
+        int nextX_3 = (nextX+1) / size;
+        int nextY_3 = (nextY + size - 1) / size;
 
-        int nextX_4 = (nextX + size - 2) / size;
-        int nextY_4 = (nextY + size - 2) / size;
+        int nextX_4 = (nextX + size - 1) / size;
+        int nextY_4 = (nextY + size - 1) / size;
 
         List<Entity> ListStillObject1 =BombermanGame.FindList(nextX_1, nextY_1, BombermanGame.stillObjects);
         List<Entity> ListStillObject2 =BombermanGame.FindList(nextX_2, nextY_2, BombermanGame.stillObjects);
@@ -276,7 +281,6 @@ public class BombermanGame extends Application {
     }
     public static Entity getEntity(double x, double y) {
         Iterator<Entity> bs = entities.iterator();
-
         Entity b;
         while(bs.hasNext()) {
             b = bs.next();
@@ -284,6 +288,9 @@ public class BombermanGame extends Application {
                 return b;
         }
         return null;
+    }
+    public static Entity getBomb(double x, double y) {
+        return bombs.stream().filter(b -> b.collision((int) x, (int) y)).findFirst().orElse(null);
     }
     public static Entity FindEntity (int x, int y, List<Entity> CheckList) {
 
@@ -302,6 +309,9 @@ public class BombermanGame extends Application {
         return ResultList;
     }
     public void update() {
+        if (victory || gameOver) {
+            Platform.exit();
+        }
         entities.forEach(Entity::update);
         Iterator<Bomb> itB = bombs.iterator();
         Iterator<Entity> itE = entities.iterator();
@@ -320,8 +330,8 @@ public class BombermanGame extends Application {
             if (e.isRemove()) {
                 itE.remove();
             }
-
         }
+
         while (itS.hasNext()) {
             Entity e = itS.next();
             if (e.isRemove()) {

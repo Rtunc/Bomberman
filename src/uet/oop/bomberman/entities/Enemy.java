@@ -1,9 +1,11 @@
 package uet.oop.bomberman.entities;
 
+import uet.oop.bomberman.BombermanGame;
+
 /**
  * Enemy đơn giản là enemy, có thể kiểm tra va chạm với bomber.
  */
-public abstract class Enemy extends SetAnimatedEntity {
+public abstract class Enemy extends SetAnimatedEntity implements AliveEntity {
 
     /**
      * Khởi tạo ban đầu với vị trí
@@ -31,7 +33,7 @@ public abstract class Enemy extends SetAnimatedEntity {
      * @param bomber bomber
      */
     public void checkBomber(Bomber bomber) {
-        if (this.collision(bomber.getX(), bomber.getY())) {
+        if (!this.isDead && this.collision(bomber.getX(), bomber.getY())) {
             bomber.setDead();
         }
     }
@@ -41,6 +43,7 @@ public abstract class Enemy extends SetAnimatedEntity {
             super.setCurrentState(CollisionAction.DEAD);
             super.frame = 0;
             this.isDead = true;
+            super.setRemove(true);
         }
     }
 

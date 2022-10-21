@@ -74,6 +74,9 @@ public class Oneal extends Enemy {
 
     private boolean canMove(int nextX, int nextY) {
         boolean result = BombermanGame.isFree(nextX, nextY);
+        if (BombermanGame.getBomb(nextX, nextY) != null) {
+            result = false;
+        }
         return result;
     }
 
