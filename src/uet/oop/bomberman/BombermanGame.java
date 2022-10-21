@@ -316,22 +316,22 @@ public class BombermanGame extends Application {
 
         while (itB.hasNext()) {
             Entity e = itB.next();
-            if(e.isRemove()) {
+            if (e.isRemove()) {
                 itB.remove();
-                bomberman.setNumberOfBombs(bomberman.getNumberOfBombs()+1);
+                bomberman.setNumberOfBombs(bomberman.getNumberOfBombs() + 1);
             }
 
         }
         while (itE.hasNext()) {
             Entity e = itE.next();
-            if(e.isRemove()) {
+            if (e.isRemove()) {
                 itE.remove();
             }
 
         }
         while (itS.hasNext()) {
             Entity e = itS.next();
-            if(e.isRemove()) {
+            if (e.isRemove()) {
                 itS.remove();
             }
 
@@ -353,11 +353,23 @@ public class BombermanGame extends Application {
                 ((Enemy) o).checkBomber(bomber);
             }
         }
-        TranslateTransition t = new TranslateTransition(Duration.millis(0.1),canvas);
-        t.setFromX(bomberman.getX());
-        t.setToX(120-bomberman.getX());
-        t.setFromY(bomberman.getY());
-        t.setToY(120-bomberman.getY());
+        TranslateTransition t = new TranslateTransition(Duration.millis(0.1), canvas);
+        System.out.println(bomberman.getY());
+        if (bomberman.getX() < 208) {
+            t.setToX(0);
+        } else if (bomberman.getX() >800) {
+            t.setToX(-592);
+        } else {
+            t.setToX(16*13 - bomberman.getX());
+        }
+
+        if (bomberman.getY() < 169) {
+            t.setToY(0);
+        } else if (bomberman.getY() > 208) {
+            t.setToY(-37);
+        } else {
+            t.setToY(13*13 - bomberman.getY());
+        }
 
         t.setInterpolator(Interpolator.LINEAR);
         t.play();
