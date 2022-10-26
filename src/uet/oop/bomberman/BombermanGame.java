@@ -1,6 +1,8 @@
 package uet.oop.bomberman;
 
 import java.io.File;
+
+import javafx.scene.Parent;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.animation.AnimationTimer;
@@ -25,6 +27,7 @@ import uet.oop.bomberman.entities.items.AddBomb;
 import uet.oop.bomberman.entities.items.AddFlame;
 import uet.oop.bomberman.entities.items.PowerUps;
 import uet.oop.bomberman.entities.items.SpeedUp;
+import uet.oop.bomberman.entities.menu.*;
 import uet.oop.bomberman.graphics.Camera;
 import uet.oop.bomberman.graphics.Sprite;
 
@@ -32,12 +35,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 
 public class BombermanGame extends Application {
+    public static SceneState state = SceneState.PAUSE;
+    public static final Map<SceneState, SceneManager> gameScene = new HashMap<>();
 
     public static final List<Entity> entities = new ArrayList<>();
     public static final List<Bomb> bombs = new ArrayList<>();
@@ -48,10 +51,31 @@ public class BombermanGame extends Application {
     public static boolean victory = false;
     public static boolean gameOver = false;
     private static char[][] mapMatrix;
-    public Bomber bomberman;
-    private Camera camera;
+    private static Bomber bomberman;
+    private static Camera camera;
     private GraphicsContext gc;
     private Canvas canvas;
+
+    public static void initList(Parent parent) {
+        gameScene.put(SceneState.PAUSE, new PauseScene());
+        gameScene.put(SceneState.PLAYING, new GameScene(parent).addHandler(bomberman));
+        gameScene.put(SceneState.GAMEOVER, new GameOverScene());
+    }
+
+    public static void restartGame(int level) {
+        entities.clear();
+        stillObjects.clear();
+        bomberman = null;
+        mapMatrix = null;
+        createMapFromFile(String.format("res/levels/Level%d.txt", level));
+        createEntities();
+        camera = new Camera(bomberman);
+        victory = gameOver = false;
+    }
+
+    public static void switchState(SceneState state) {
+        BombermanGame.state = state;
+    }
 
     public static void main(String[] args) {
 
@@ -137,15 +161,12 @@ public class BombermanGame extends Application {
     public void start(Stage stage) {
         BorderPane border = new BorderPane();
         createMapFromFile("res/levels/Level1.txt");
-        bomberman = new Bomber(1, 1);
+        createEntities();
         camera = new Camera(bomberman);
-
-        String path = "res/mav.wav";
-        Media media = new Media(new File(path).toURI().toString());
-        MediaPlayer mediaPlayer = new MediaPlayer(media);
-        mediaPlayer.setAutoPlay(true);
-
-        entities.add(bomberman);
+//        String path = "res/mav.wav";
+//        Media media = new Media(path);
+//        MediaPlayer mediaPlayer = new MediaPlayer(media);
+//        mediaPlayer.setAutoPlay(true);
         // Tao Canvas
         canvas = new Canvas(Sprite.SCALED_SIZE * WIDTH, Sprite.SCALED_SIZE * HEIGHT);
         gc = canvas.getGraphicsContext2D();
@@ -153,59 +174,13 @@ public class BombermanGame extends Application {
         // Tao root container
         Pane root = new Pane();
         root.getChildren().add(canvas);
-
-        // Tao scene
-        Scene scene = new Scene(root);
-
-        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                switch (event.getCode()) {
-                    case UP:
-                        bomberman.setInputDirection(MovingDirection.UP);
-                        bomberman.increaseVelocity();
-                        break;
-                    case DOWN:
-                        bomberman.setInputDirection(MovingDirection.DOWN);
-                        bomberman.increaseVelocity();
-                        break;
-                    case LEFT:
-                        bomberman.setInputDirection(MovingDirection.LEFT);
-                        bomberman.increaseVelocity();
-                        break;
-                    case RIGHT:
-                        bomberman.setInputDirection(MovingDirection.RIGHT);
-                        bomberman.increaseVelocity();
-                        break;
-                    case SPACE:
-                        bomberman.placeBomb();
-                        break;
-
-                }
-            }
-        });
-
-        scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                switch (event.getCode()) {
-                    case UP:
-                    case RIGHT:
-                    case DOWN:
-                    case LEFT:
-                        bomberman.setInputDirection(null);
-                        bomberman.resetVelocity();
-                        break;
-
-                }
-            }
-        });
+        initList(root);
 //
 //        Scene.setOnKeyPressed(event -> {
 //        KeyCode keycode = keyEvent.getCode();
 //        })
         // Them scene vao stage
-        stage.setScene(scene);
+        stage.setScene(gameScene.get(state).getScene());
         stage.setHeight(13 * 32);
         stage.setWidth(13 * 32);
         stage.show();
@@ -215,6 +190,11 @@ public class BombermanGame extends Application {
 
             @Override
             public void handle(long l) {
+                SceneManager thisState = gameScene.get(state);
+                if (thisState instanceof GameScene) {
+                    ((GameScene) thisState).addHandler(bomberman);
+                }
+                stage.setScene(thisState.getScene());
                 render();
                 update();
                 if (lastUpdate > 0) {
@@ -224,10 +204,9 @@ public class BombermanGame extends Application {
             }
         };
         timer.start();
-        createEntities();
     }
 
-    public void createMapFromFile(String fileName) {
+    public static void createMapFromFile(String fileName) {
         BufferedReader bufferedReader = null;
 
         try {
@@ -258,7 +237,7 @@ public class BombermanGame extends Application {
         }
     }
 
-    public void createEntities() {
+    public static void createEntities() {
         for (int i = 0; i < HEIGHT; i++) {
 
             for (int j = 0; j < WIDTH; j++) {
@@ -268,7 +247,13 @@ public class BombermanGame extends Application {
                         Wall object = new Wall(j, i, Sprite.wall.getFxImage());
                         stillObjects.add(object);
                         break;
-
+                    }
+                    case 'p': {
+                        Grass object2 = new Grass(j, i, Sprite.grass.getFxImage());
+                        stillObjects.add(object2);
+                        bomberman = new Bomber(j, i);
+                        entities.add(bomberman);
+                        break;
                     }
                     case '*': {
                         Entity object2 = new Grass(j, i, Sprite.grass.getFxImage());
@@ -333,10 +318,11 @@ public class BombermanGame extends Application {
     }
 
     public void update() {
-        if (victory || gameOver) {
-            Platform.exit();
+        if (BombermanGame.gameOver) {
+            BombermanGame.switchState(SceneState.GAMEOVER);
         }
         entities.forEach(Entity::update);
+        System.out.println(bomberman.getX());
         Iterator<Bomb> itB = bombs.iterator();
         Iterator<Entity> itE = entities.iterator();
         Iterator<Entity> itS = stillObjects.iterator();
@@ -359,6 +345,7 @@ public class BombermanGame extends Application {
             Entity e = itS.next();
             if (e instanceof PowerUps) {
                 ((PowerUps) e).checkBomber(bomberman);
+//                System.out.println(e.getX());
             }
             if (e.isRemove()) {
                 itS.remove();
@@ -375,7 +362,7 @@ public class BombermanGame extends Application {
         }
 
         TranslateTransition t = new TranslateTransition(Duration.millis(0.1), canvas);
-        System.out.println(bomberman.getY());
+//        System.out.println(bomberman.getY());
         if (bomberman.getX() < 208) {
             t.setToX(0);
         } else if (bomberman.getX() > 800) {

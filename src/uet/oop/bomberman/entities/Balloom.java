@@ -30,6 +30,9 @@ public class Balloom extends Enemy {
 
     @Override
     protected void calculateMove() {
+        if (this.isDead) {
+            return;
+        }
         if (canMove(x, y - velocity) && randomMove != MovingDirection.DOWN) {
             randomMove = MovingDirection.UP;
         } else if (canMove(x, y + velocity) && randomMove != MovingDirection.UP) {

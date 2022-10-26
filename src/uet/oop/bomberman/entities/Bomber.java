@@ -3,6 +3,7 @@ package uet.oop.bomberman.entities;
 import javafx.scene.image.Image;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.bomb.Bomb;
+import uet.oop.bomberman.entities.menu.SceneState;
 import uet.oop.bomberman.graphics.Sprite;
 
 /**
@@ -205,11 +206,10 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
     }
 
     public void move(double xa, double ya) {
-//        TODO: xử lý input cho việc nhân vật chen vào giữa đơn giản hơn
-        y += ya;
-//
-        x += xa;
-//
+        if (BombermanGame.state == SceneState.PLAYING) {
+            x += xa;
+            y += ya;
+        }
     }
 
     /**
@@ -231,6 +231,7 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
 
     public void placeBomb() {
         if (numberOfBombs >= 1) {
+            boolean bombGood = true;
             Bomb b = new Bomb(this.getXUnit(), this.getYUnit(), flameRadius);
             BombermanGame.bombs.add(b);
             numberOfBombs--;
@@ -243,9 +244,10 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
 
     @Override
     public void update() {
-
         bomberDead();
-        calculateMove();
+        if (autocorrecting || inputDirection != null) {
+            calculateMove();
+        }
         if (withBomb && lastBombX != 0 && (Math.abs(lastBombX - x) > 32 || Math.abs(lastBombY - y) > 32))
             withBomb = false;
 //

@@ -1,6 +1,7 @@
 package uet.oop.bomberman.entities;
 
 import uet.oop.bomberman.BombermanGame;
+import uet.oop.bomberman.entities.menu.SceneState;
 
 /**
  * Enemy đơn giản là enemy, có thể kiểm tra va chạm với bomber.
@@ -24,8 +25,10 @@ public abstract class Enemy extends SetAnimatedEntity implements AliveEntity {
     protected abstract void calculateMove();
 
     public void move(double xA, double yA) {
-        x += xA;
-        y += yA;
+        if (BombermanGame.state == SceneState.PLAYING) {
+            x += xA;
+            y += yA;
+        }
     }
 
     /**
@@ -43,7 +46,6 @@ public abstract class Enemy extends SetAnimatedEntity implements AliveEntity {
             super.setCurrentState(CollisionAction.DEAD);
             super.frame = 0;
             this.isDead = true;
-            super.setRemove(true);
         }
     }
 
