@@ -1,9 +1,12 @@
 package uet.oop.bomberman.entities;
 
 import javafx.scene.image.Image;
+import javafx.scene.media.AudioClip;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.bomb.Bomb;
 import uet.oop.bomberman.graphics.Sprite;
+
+import java.io.File;
 
 /**
  * Bomber là người chơi
@@ -261,6 +264,11 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
             super.setCurrentState(CollisionAction.DEAD);
             super.frame = 0;
             this.isDead = true;
+            String path = "res/Bomberman SFX (2).wav";
+            AudioClip media = new AudioClip(new File(path).toURI().toString());
+            //MediaPlayer mediaPlayer = new MediaPlayer(media);
+            media.play(0.1);
+            System.out.println("bomb ded");
         }
     }
 

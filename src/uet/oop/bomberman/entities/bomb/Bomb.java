@@ -2,10 +2,12 @@ package uet.oop.bomberman.entities.bomb;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
+import javafx.scene.media.AudioClip;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.*;
 import uet.oop.bomberman.graphics.Sprite;
 
+import java.io.File;
 import java.util.List;
 
 public class Bomb extends AnimatedEntity {
@@ -67,6 +69,11 @@ public class Bomb extends AnimatedEntity {
         else {
             if (!isExploded) {
                 isExploded = true;
+                String path = "res/Bomberman SFX (5).wav";
+                AudioClip media = new AudioClip(new File(path).toURI().toString());
+                //MediaPlayer mediaPlayer = new MediaPlayer(media);
+                media.play(0.1);
+                System.out.println("boom");
                 explode();
             } else {
                 if (_timeAfter <= 18) {

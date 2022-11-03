@@ -3,6 +3,7 @@ package uet.oop.bomberman;
 import java.io.File;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.AudioClip;
 import javafx.animation.AnimationTimer;
 import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
@@ -140,10 +141,6 @@ public class BombermanGame extends Application {
         bomberman = new Bomber(1, 1);
         camera = new Camera(bomberman);
 
-        String path = "res/mav.wav";
-        Media media = new Media(new File(path).toURI().toString());
-        MediaPlayer mediaPlayer = new MediaPlayer(media);
-        mediaPlayer.setAutoPlay(true);
 
         entities.add(bomberman);
         // Tao Canvas
@@ -375,7 +372,6 @@ public class BombermanGame extends Application {
         }
 
         TranslateTransition t = new TranslateTransition(Duration.millis(0.1), canvas);
-        System.out.println(bomberman.getY());
         if (bomberman.getX() < 208) {
             t.setToX(0);
         } else if (bomberman.getX() > 800) {
