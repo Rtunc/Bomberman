@@ -25,6 +25,12 @@ public class PauseScene extends SceneManager {
         textResume.setOnMouseClicked(e -> {
             BombermanGame.switchState(SceneState.PLAYING);
         });
+        textResume.setOnMouseEntered(e -> {
+            textResume.setFill(Color.SKYBLUE);
+        });
+        textResume.setOnMouseExited(e -> {
+            textResume.setFill(Color.WHITE);
+        });
         Group textGroup = new Group(textPause, textResume);
         super.scene = new Scene(textGroup, Color.BLACK);
     }

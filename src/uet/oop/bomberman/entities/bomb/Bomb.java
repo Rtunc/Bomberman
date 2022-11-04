@@ -58,10 +58,6 @@ public class Bomb extends AnimatedEntity {
 //    protected boolean isExploded = false;
 
     public void update() {
-        flameLengthTop = 0;
-        flameLengthDown = 0;
-        flameLengthRight = 0;
-        flameLengthLeft = 0;
         if (_timeToExplode > 0)
             _timeToExplode--;
         else {
@@ -70,7 +66,7 @@ public class Bomb extends AnimatedEntity {
                 explode();
             } else {
                 if (_timeAfter <= 18) {
-                    explode();
+                    checkEnitiies();
                     _timeAfter++;
                 } else {
                     setRemove(true);
@@ -168,14 +164,99 @@ public class Bomb extends AnimatedEntity {
         }
     }
 
+    private void checkEnitiies() {
+        for (int i = 1; i <= flameLengthTop; i++) {
+            List<Entity> checkList = BombermanGame.FindList(this.getXUnit(), this.getYUnit() - i, BombermanGame.stillObjects);
+            List<Entity> entityList = BombermanGame.FindList(this.getXUnit(), this.getYUnit() - i, BombermanGame.entities);
+            boolean stop = false;
+            for (Entity check : checkList) {
+                if (check instanceof Wall) {
+                    stop = true;
+                } else if (check instanceof Brick) {
+                    check.setDead(true);
+                    stop = true;
+                }
+            }
+            for (Entity enemy : entityList) {
+                if (enemy instanceof AliveEntity) {
+                    ((AliveEntity) enemy).setDead();
+                }
+            }
+            if (stop) {
+                break;
+            }
+        }
+        for (int i = 1; i <= flameLengthDown; i++) {
+            List<Entity> checkList = BombermanGame.FindList(this.getXUnit(), this.getYUnit() + i, BombermanGame.stillObjects);
+            List<Entity> entityList = BombermanGame.FindList(this.getXUnit(), this.getYUnit() + i, BombermanGame.entities);
+            boolean stop = false;
+            for (Entity check : checkList) {
+                if (check instanceof Wall) {
+                    stop = true;
+                } else if (check instanceof Brick) {
+                    check.setDead(true);
+                    stop = true;
+                }
+            }
+            for (Entity enemy : entityList) {
+                if (enemy instanceof AliveEntity) {
+                    ((AliveEntity) enemy).setDead();
+                }
+            }
+            if (stop) {
+                break;
+            }
+        }
+        for (int i = 1; i <= flameLengthRight; i++) {
+            List<Entity> checkList = BombermanGame.FindList(this.getXUnit() + i, this.getYUnit(), BombermanGame.stillObjects);
+            List<Entity> entityList = BombermanGame.FindList(this.getXUnit() + i, this.getYUnit(), BombermanGame.entities);
+            boolean stop = false;
+            for (Entity check : checkList) {
+                if (check instanceof Wall) {
+                    stop = true;
+                } else if (check instanceof Brick) {
+                    check.setDead(true);
+                    stop = true;
+                }
+            }
+            for (Entity enemy : entityList) {
+                if (enemy instanceof AliveEntity) {
+                    ((AliveEntity) enemy).setDead();
+                }
+            }
+            if (stop) {
+                break;
+            }
+        }
+        for (int i = 1; i <= flameLengthLeft; i++) {
+            List<Entity> checkList = BombermanGame.FindList(this.getXUnit() - i, this.getYUnit(), BombermanGame.stillObjects);
+            List<Entity> entityList = BombermanGame.FindList(this.getXUnit() - i, this.getYUnit(), BombermanGame.entities);
+            boolean stop = false;
+            for (Entity check : checkList) {
+                if (check instanceof Wall) {
+                    stop = true;
+                } else if (check instanceof Brick) {
+                    check.setDead(true);
+                    stop = true;
+                }
+            }
+            for (Entity enemy : entityList) {
+                if (enemy instanceof AliveEntity) {
+                    ((AliveEntity) enemy).setDead();
+                }
+            }
+            if (stop) {
+                break;
+            }
+        }
+    }
+
 
     /**
      * Cập nhật sizeFlame của bomb + phá gạch;
      * TODO: Kill enemy
      */
     protected void explode() {//nổ
-
-
         for (int i = 1; i <= radius; i++) {
             List<Entity> checkList = BombermanGame.FindList(this.getXUnit(), this.getYUnit() - i, BombermanGame.stillObjects);
             List<Entity> entityList = BombermanGame.FindList(this.getXUnit(), this.getYUnit() - i, BombermanGame.entities);
@@ -276,7 +357,6 @@ public class Bomb extends AnimatedEntity {
                 }
             }
         }
-
     }
 
 

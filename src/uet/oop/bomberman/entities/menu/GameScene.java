@@ -1,16 +1,23 @@
 package uet.oop.bomberman.entities.menu;
 
-import javafx.event.EventHandler;
-import javafx.scene.Parent;
+import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.Bomber;
 import uet.oop.bomberman.entities.MovingDirection;
 
 public class GameScene extends SceneManager {
-    public GameScene(Parent parent) {
+    Pane parent;
+    Rectangle rectangle;
+
+    public GameScene(Pane parent) {
         scene = new Scene(parent);
+        this.parent = parent;
+        rectangle = new Rectangle(0, 0, scene.getWidth(), 50);
+        rectangle.setFill(new Color(0f, 0f, 0f, 0.2));
     }
 
     public GameScene addHandler(Bomber bomberman) {
@@ -52,6 +59,14 @@ public class GameScene extends SceneManager {
                     break;
             }
         });
+//        Text textPause = new Text();
+//        textPause.setText("Heart: " + (BombermanGame.bomberman.getHeart() + 1));
+//        textPause.setFont(Font.font("Courier New", FontWeight.NORMAL, 14));
+//        textPause.setFill(Color.WHITE);
+//        textPause.setX(20);
+//        textPause.setY(10);
+        Group group = new Group(rectangle);
+        parent.getChildren().add(group);
         return this;
     }
 }

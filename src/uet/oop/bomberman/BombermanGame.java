@@ -51,12 +51,12 @@ public class BombermanGame extends Application {
     public static boolean victory = false;
     public static boolean gameOver = false;
     private static char[][] mapMatrix;
-    private static Bomber bomberman;
+    public static Bomber bomberman;
     private static Camera camera;
     private GraphicsContext gc;
     private Canvas canvas;
 
-    public static void initList(Parent parent) {
+    public static void initList(Pane parent) {
         gameScene.put(SceneState.PAUSE, new PauseScene());
         gameScene.put(SceneState.PLAYING, new GameScene(parent).addHandler(bomberman));
         gameScene.put(SceneState.GAMEOVER, new GameOverScene());
@@ -71,6 +71,7 @@ public class BombermanGame extends Application {
         createEntities();
         camera = new Camera(bomberman);
         victory = gameOver = false;
+        ((GameScene) gameScene.get(SceneState.PLAYING)).addHandler(bomberman);
     }
 
     public static void switchState(SceneState state) {
@@ -190,12 +191,12 @@ public class BombermanGame extends Application {
 
             @Override
             public void handle(long l) {
+                render();
                 SceneManager thisState = gameScene.get(state);
                 if (thisState instanceof GameScene) {
-                    ((GameScene) thisState).addHandler(bomberman);
+//                    ((GameScene) thisState).addHandler(bomberman);
                 }
                 stage.setScene(thisState.getScene());
-                render();
                 update();
                 if (lastUpdate > 0) {
                     fps = (double) 1 / ((l - lastUpdate) * 1e-9);
@@ -322,7 +323,7 @@ public class BombermanGame extends Application {
             BombermanGame.switchState(SceneState.GAMEOVER);
         }
         entities.forEach(Entity::update);
-        System.out.println(bomberman.getX());
+//        System.out.println(bomberman.getX());
         Iterator<Bomb> itB = bombs.iterator();
         Iterator<Entity> itE = entities.iterator();
         Iterator<Entity> itS = stillObjects.iterator();
@@ -371,8 +372,8 @@ public class BombermanGame extends Application {
             t.setToX(16 * 13 - bomberman.getX());
         }
 
-        if (bomberman.getY() < 169) {
-            t.setToY(0);
+        if (bomberman.getY() < 119) {
+            t.setToY(50);
         } else if (bomberman.getY() > 208) {
             t.setToY(-37);
         } else {

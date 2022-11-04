@@ -6,10 +6,13 @@ import uet.oop.bomberman.entities.bomb.Bomb;
 import uet.oop.bomberman.entities.menu.SceneState;
 import uet.oop.bomberman.graphics.Sprite;
 
+import static javafx.event.Event.fireEvent;
+
 /**
  * Bomber là người chơi
  */
 public class Bomber extends SetAnimatedEntity implements AliveEntity {
+    public static BomberEvent DEAD_EVENT;
     /**
      * Hướng nhập từ người chơi
      */
@@ -231,7 +234,14 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
 
     public void placeBomb() {
         if (numberOfBombs >= 1) {
-            boolean bombGood = true;
+            for (Entity e :
+                    BombermanGame.entities) {
+                if (e instanceof Enemy) {
+                    if (e.collision(this.getXUnit() * Sprite.SCALED_SIZE, this.getYUnit() * Sprite.SCALED_SIZE)) {
+                        return;
+                    }
+                }
+            }
             Bomb b = new Bomb(this.getXUnit(), this.getYUnit(), flameRadius);
             BombermanGame.bombs.add(b);
             numberOfBombs--;

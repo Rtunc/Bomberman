@@ -22,6 +22,12 @@ public class GameOverScene extends SceneManager {
         textResume.setFill(Color.WHITE);
         textResume.setX(32*6 - textResume.getLayoutBounds().getWidth()/2);
         textResume.setY(150);
+        textResume.setOnMouseEntered(e -> {
+            textResume.setFill(Color.SKYBLUE);
+        });
+        textResume.setOnMouseExited(e -> {
+            textResume.setFill(Color.WHITE);
+        });
         textResume.setOnMouseClicked(e -> {
             BombermanGame.switchState(SceneState.PLAYING);
             BombermanGame.restartGame(1);
