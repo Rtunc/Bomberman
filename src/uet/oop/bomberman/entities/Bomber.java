@@ -12,7 +12,6 @@ import static javafx.event.Event.fireEvent;
  * Bomber là người chơi
  */
 public class Bomber extends SetAnimatedEntity implements AliveEntity {
-    public static BomberEvent DEAD_EVENT;
     /**
      * Hướng nhập từ người chơi
      */

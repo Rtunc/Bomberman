@@ -18,6 +18,8 @@ public class GameScene extends SceneManager {
         this.parent = parent;
         rectangle = new Rectangle(0, 0, scene.getWidth(), 50);
         rectangle.setFill(new Color(0f, 0f, 0f, 0.2));
+        Group group = new Group(rectangle);
+        parent.getChildren().add(group);
     }
 
     public GameScene addHandler(Bomber bomberman) {
@@ -65,8 +67,6 @@ public class GameScene extends SceneManager {
 //        textPause.setFill(Color.WHITE);
 //        textPause.setX(20);
 //        textPause.setY(10);
-        Group group = new Group(rectangle);
-        parent.getChildren().add(group);
         return this;
     }
 }

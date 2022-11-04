@@ -2,6 +2,7 @@ package uet.oop.bomberman;
 
 import java.io.File;
 
+import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -19,6 +20,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import uet.oop.bomberman.entities.*;
@@ -43,6 +46,7 @@ public class BombermanGame extends Application {
     public static final Map<SceneState, SceneManager> gameScene = new HashMap<>();
 
     public static final List<Entity> entities = new ArrayList<>();
+    public static final List<Enemy> enemies = new ArrayList<>();
     public static final List<Bomb> bombs = new ArrayList<>();
     public static final List<Entity> stillObjects = new ArrayList<>();
     public static int WIDTH;
@@ -65,6 +69,7 @@ public class BombermanGame extends Application {
     public static void restartGame(int level) {
         entities.clear();
         stillObjects.clear();
+        enemies.clear();
         bomberman = null;
         mapMatrix = null;
         createMapFromFile(String.format("res/levels/Level%d.txt", level));
@@ -176,6 +181,10 @@ public class BombermanGame extends Application {
         Pane root = new Pane();
         root.getChildren().add(canvas);
         initList(root);
+        Rectangle rectangle = new Rectangle(0, 0, root.getWidth(), 50);
+        rectangle.setFill(new Color(0f, 0f, 0f, 0.2));
+        Group group = new Group(rectangle);
+        root.getChildren().add(rectangle);
 //
 //        Scene.setOnKeyPressed(event -> {
 //        KeyCode keycode = keyEvent.getCode();
@@ -256,6 +265,15 @@ public class BombermanGame extends Application {
                         entities.add(bomberman);
                         break;
                     }
+                    case 'x' : {
+                        Grass object2 = new Grass(j, i, Sprite.grass.getFxImage());
+                        stillObjects.add(object2);
+                        Portal portal = new Portal(j, i);
+                        stillObjects.add(portal);
+                        Brick object3 = new Brick(j, i, Sprite.brick.getFxImage());
+                        stillObjects.add(object3);
+                        break;
+                    }
                     case '*': {
                         Entity object2 = new Grass(j, i, Sprite.grass.getFxImage());
                         stillObjects.add(object2);
@@ -268,15 +286,17 @@ public class BombermanGame extends Application {
                     case '1': {
                         Entity object = new Grass(j, i, Sprite.grass.getFxImage());
                         stillObjects.add(object);
-                        Entity object1 = new Balloom(j, i);
+                        Enemy object1 = new Balloom(j, i);
                         entities.add(object1);
+                        enemies.add(object1);
                         break;
                     }
                     case '2': {
                         Entity object = new Grass(j, i, Sprite.grass.getFxImage());
                         stillObjects.add(object);
-                        Entity object2 = new Oneal(j, i);
+                        Enemy object2 = new Oneal(j, i);
                         entities.add(object2);
+                        enemies.add(object2);
                         break;
                     }
                     case 'b': {
@@ -325,8 +345,8 @@ public class BombermanGame extends Application {
         entities.forEach(Entity::update);
 //        System.out.println(bomberman.getX());
         Iterator<Bomb> itB = bombs.iterator();
-        Iterator<Entity> itE = entities.iterator();
         Iterator<Entity> itS = stillObjects.iterator();
+        enemies.removeIf(Entity::isDead);
 
         while (itB.hasNext()) {
             Entity e = itB.next();
@@ -335,12 +355,7 @@ public class BombermanGame extends Application {
                 bomberman.setNumberOfBombs(bomberman.getNumberOfBombs() + 1);
             }
         }
-        while (itE.hasNext()) {
-            Entity e = itE.next();
-            if (e.isRemove()) {
-                itE.remove();
-            }
-        }
+        entities.removeIf(Entity::isDead);
 
         while (itS.hasNext()) {
             Entity e = itS.next();
@@ -390,7 +405,6 @@ public class BombermanGame extends Application {
 
 
     public void render() {
-
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         stillObjects.forEach(g -> g.render(gc));
         bombs.forEach(g -> g.render(gc));
