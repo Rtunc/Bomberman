@@ -170,7 +170,6 @@ public class BombermanGame extends Application {
         createMapFromFile("res/levels/Level1.txt");
         createEntities();
         camera = new Camera(bomberman);
-        entities.add(bomberman);
         // Tao Canvas
         canvas = new Canvas(Sprite.SCALED_SIZE * WIDTH, Sprite.SCALED_SIZE * HEIGHT);
         gc = canvas.getGraphicsContext2D();
