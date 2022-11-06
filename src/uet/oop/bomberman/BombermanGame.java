@@ -299,6 +299,14 @@ public class BombermanGame extends Application {
                         enemies.add(object2);
                         break;
                     }
+                    case '3': {
+                        Entity object = new Grass(j, i, Sprite.grass.getFxImage());
+                        stillObjects.add(object);
+                        Enemy object2 = new Doll(j, i);
+                        entities.add(object2);
+                        enemies.add(object2);
+                        break;
+                    }
                     case 'b': {
                         Grass object3 = new Grass(j, i, Sprite.grass.getFxImage());
                         stillObjects.add(object3);
@@ -355,7 +363,6 @@ public class BombermanGame extends Application {
                 bomberman.setNumberOfBombs(bomberman.getNumberOfBombs() + 1);
             }
         }
-        entities.removeIf(Entity::isDead);
 
         while (itS.hasNext()) {
             Entity e = itS.next();

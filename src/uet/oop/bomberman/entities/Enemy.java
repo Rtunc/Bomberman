@@ -24,6 +24,16 @@ public abstract class Enemy extends SetAnimatedEntity implements AliveEntity {
      */
     protected abstract void calculateMove();
 
+    /**
+     * unitDirection để lưu vị trí di chuyển ở unit
+     */
+    protected MovingDirection unitDirection;
+
+    /**
+     * isCorrecting khóa di chuyển nhân vật
+     */
+    protected boolean isCorrecting = false;
+
     public void move(double xA, double yA) {
         if (BombermanGame.state == SceneState.PLAYING) {
             x += xA;

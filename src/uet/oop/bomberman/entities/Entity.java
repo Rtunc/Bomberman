@@ -73,6 +73,15 @@ public abstract class Entity {
         this.y = y;
     }
 
+
+    public static int convertUnit(int absolute) {
+        return absolute / Sprite.SCALED_SIZE;
+    }
+
+    public static int convertAbsolute(int unit) {
+        return unit * Sprite.SCALED_SIZE;
+    }
+
     public void render(GraphicsContext gc) {
         if (isRender) {
             gc.drawImage(img, x, y);
