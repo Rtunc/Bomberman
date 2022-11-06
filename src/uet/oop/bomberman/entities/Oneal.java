@@ -34,7 +34,9 @@ public class Oneal extends Enemy {
 
     @Override
     protected void calculateMove() {
-
+        if (this.isDead) {
+            return;
+        }
         switch (randomMove) {
             case UP:
                 if (canMove(x, y - velocity)) {

@@ -4,8 +4,8 @@ import javafx.scene.image.Image;
 import javafx.scene.media.AudioClip;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.bomb.Bomb;
+import uet.oop.bomberman.entities.menu.SceneState;
 import uet.oop.bomberman.graphics.Sprite;
-
 import java.io.File;
 
 /**
@@ -208,11 +208,10 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
     }
 
     public void move(double xa, double ya) {
-//        TODO: xử lý input cho việc nhân vật chen vào giữa đơn giản hơn
-        y += ya;
-//
-        x += xa;
-//
+        if (BombermanGame.state == SceneState.PLAYING) {
+            x += xa;
+            y += ya;
+        }
     }
 
     /**
@@ -234,6 +233,14 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
 
     public void placeBomb() {
         if (numberOfBombs >= 1) {
+            for (Entity e :
+                    BombermanGame.entities) {
+                if (e instanceof Enemy) {
+                    if (e.collision(this.getXUnit() * Sprite.SCALED_SIZE, this.getYUnit() * Sprite.SCALED_SIZE)) {
+                        return;
+                    }
+                }
+            }
             Bomb b = new Bomb(this.getXUnit(), this.getYUnit(), flameRadius);
             BombermanGame.bombs.add(b);
             numberOfBombs--;
@@ -246,9 +253,10 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
 
     @Override
     public void update() {
-
         bomberDead();
-        calculateMove();
+        if (autocorrecting || inputDirection != null) {
+            calculateMove();
+        }
         if (withBomb && lastBombX != 0 && (Math.abs(lastBombX - x) > 32 || Math.abs(lastBombY - y) > 32))
             withBomb = false;
 //

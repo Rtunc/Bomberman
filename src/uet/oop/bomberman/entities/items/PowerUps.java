@@ -31,5 +31,6 @@ public abstract class PowerUps extends Entity {
 
     @Override
     public void update() {
+
     }
 }
