@@ -6,6 +6,7 @@ import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.AudioClip;
 import javafx.animation.AnimationTimer;
 import javafx.animation.Interpolator;
 import javafx.animation.TranslateTransition;
@@ -169,10 +170,7 @@ public class BombermanGame extends Application {
         createMapFromFile("res/levels/Level1.txt");
         createEntities();
         camera = new Camera(bomberman);
-//        String path = "res/mav.wav";
-//        Media media = new Media(path);
-//        MediaPlayer mediaPlayer = new MediaPlayer(media);
-//        mediaPlayer.setAutoPlay(true);
+        entities.add(bomberman);
         // Tao Canvas
         canvas = new Canvas(Sprite.SCALED_SIZE * WIDTH, Sprite.SCALED_SIZE * HEIGHT);
         gc = canvas.getGraphicsContext2D();
@@ -385,7 +383,6 @@ public class BombermanGame extends Application {
         }
 
         TranslateTransition t = new TranslateTransition(Duration.millis(0.1), canvas);
-//        System.out.println(bomberman.getY());
         if (bomberman.getX() < 208) {
             t.setToX(0);
         } else if (bomberman.getX() > 800) {

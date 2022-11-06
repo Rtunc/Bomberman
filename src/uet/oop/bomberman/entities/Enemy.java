@@ -1,7 +1,10 @@
 package uet.oop.bomberman.entities;
 
+import javafx.scene.media.AudioClip;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.menu.SceneState;
+
+import java.io.File;
 
 /**
  * Enemy đơn giản là enemy, có thể kiểm tra va chạm với bomber.
@@ -56,6 +59,12 @@ public abstract class Enemy extends SetAnimatedEntity implements AliveEntity {
             super.setCurrentState(CollisionAction.DEAD);
             super.frame = 0;
             this.isDead = true;
+            super.setRemove(true);
+            String path = "res/Bomberman SFX (3).wav";
+            AudioClip media = new AudioClip(new File(path).toURI().toString());
+            //MediaPlayer mediaPlayer = new MediaPlayer(media);
+            media.play(0.5);
+            System.out.println("ded");
         }
     }
 
