@@ -69,7 +69,6 @@ public class Doll extends Enemy {
         switch (unitDirection) {
             case UP:
                 if (canMove(convertUnit(this.x), convertUnit(this.y) - 1)) {
-                    move(0, -velocity);
                     isCorrecting = true;
                 } else {
                     unitDirection = (MovingDirection) unitDirection.getNext(unitDirection);
@@ -78,7 +77,6 @@ public class Doll extends Enemy {
                 break;
             case DOWN:
                 if (canMove(convertUnit(this.x), convertUnit(this.y) + 1)) {
-                    move(0, velocity);
                     isCorrecting = true;
                 } else {
                     unitDirection = (MovingDirection) unitDirection.getNext(unitDirection);
@@ -87,7 +85,6 @@ public class Doll extends Enemy {
                 break;
             case LEFT:
                 if (canMove(convertUnit(this.x) - 1, (convertUnit(this.y)))) {
-                    move(-velocity, 0);
                     super.setCurrentState(unitDirection);
                     isCorrecting = true;
                 } else {
@@ -96,8 +93,7 @@ public class Doll extends Enemy {
                 }
                 break;
             case RIGHT:
-                if (canMove(convertUnit(this.x) - 1, convertUnit(this.y))) {
-                    move(velocity, 0);
+                if (canMove(convertUnit(this.x) + 1, convertUnit(this.y))) {
                     super.setCurrentState(unitDirection);
                     isCorrecting = true;
                 } else {
@@ -122,6 +118,7 @@ public class Doll extends Enemy {
         if (BombermanGame.getBomb(convertAbsolute(nextX), convertAbsolute(nextY)) != null) {
             result = false;
         }
+
         return result;
     }
 

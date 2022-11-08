@@ -234,11 +234,9 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
     public void placeBomb() {
         if (numberOfBombs >= 1) {
             for (Entity e :
-                    BombermanGame.entities) {
-                if (e instanceof Enemy) {
+                    BombermanGame.enemies) {
                     if (e.collision(this.getXUnit() * Sprite.SCALED_SIZE, this.getYUnit() * Sprite.SCALED_SIZE)) {
                         return;
-                    }
                 }
             }
             Bomb b = new Bomb(this.getXUnit(), this.getYUnit(), flameRadius);
@@ -254,6 +252,7 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
     @Override
     public void update() {
         bomberDead();
+        bomberDeadImmune();
         if (autocorrecting || inputDirection != null) {
             calculateMove();
         }
@@ -268,7 +267,7 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
      * Cài đặt hành động khi người chơi chết
      */
     public void setDead() {
-        if (!this.isDead) {
+        if (!this.isDead && deadImmune == 0) {
             super.setCurrentState(CollisionAction.DEAD);
             super.frame = 0;
             this.isDead = true;
@@ -280,6 +279,8 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
         }
     }
 
+    int deadImmune = 0;
+
     private void bomberDead() {
         if (this.isDead) {
             if (!isRender && heart > 0 && deadRecover == 0) {
@@ -287,6 +288,7 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
                 isRender = true;
                 this.isDead = false;
                 deadRecover = 120;
+                deadImmune = 120;
                 super.setCurrentState(MovingDirection.STAND);
             } else if (!isRender && heart == 0 && deadRecover == 0) {
                 BombermanGame.gameOver = true;
@@ -295,6 +297,16 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
             }
             if (!isRender) {
                 deadRecover--;
+            }
+        }
+    }
+
+    private void bomberDeadImmune() {
+        if (deadImmune > 0) {
+            deadImmune--;
+            isRender = deadImmune % 12 != 0;
+            if (deadImmune == 0) {
+                isRender = true;
             }
         }
     }

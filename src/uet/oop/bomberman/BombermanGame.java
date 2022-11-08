@@ -48,7 +48,7 @@ public class BombermanGame extends Application {
 
     public static final List<Entity> entities = new ArrayList<>();
     public static final List<Enemy> enemies = new ArrayList<>();
-    public static final List<Bomb> bombs = new ArrayList<>();
+    public static final List<Entity> bombs = new ArrayList<>();
     public static final List<Entity> stillObjects = new ArrayList<>();
     public static int WIDTH;
     public static int HEIGHT;
@@ -146,11 +146,12 @@ public class BombermanGame extends Application {
         return bombs.stream().filter(b -> b.collision((int) x, (int) y)).findFirst().orElse(null);
     }
 
-    public static Entity FindEntity(int x, int y, List<Entity> CheckList) {
-
+    public static Entity FindEntity(int x, int y, List<Entity> CheckList, Entity type) {
         for (Entity check : CheckList) {
             if (check.getXUnit() == x && check.getYUnit() == y)
-                return check;
+                if (check.getClass().equals(type.getClass())) {
+                    return check;
+                }
         }
         return null;
     }
@@ -349,7 +350,7 @@ public class BombermanGame extends Application {
         }
         entities.forEach(Entity::update);
 //        System.out.println(bomberman.getX());
-        Iterator<Bomb> itB = bombs.iterator();
+        Iterator<Entity> itB = bombs.iterator();
         Iterator<Entity> itS = stillObjects.iterator();
         enemies.removeIf(Entity::isDead);
 
@@ -378,6 +379,9 @@ public class BombermanGame extends Application {
                 entities) {
             if (o instanceof Enemy) {
                 ((Enemy) o).checkBomber(bomberman);
+                if (o instanceof Oneal) {
+                    ((Oneal) o).buildTarget(bomberman);
+                }
             }
         }
 
