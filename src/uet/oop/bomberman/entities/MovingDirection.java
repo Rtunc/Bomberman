@@ -35,7 +35,7 @@ public enum MovingDirection implements AnimateAction {
     }
 
     public MovingDirection randomMove() {
-        return (MovingDirection) getByNum((int) (Math.random()*10));
+        return (MovingDirection) getByNum((int) (Math.random()*100));
     }
 
     @Override
