@@ -63,6 +63,7 @@ public class BombermanGame extends Application {
     private static Camera camera;
     private GraphicsContext gc;
     private Canvas canvas;
+    private Rectangle rectangle = new Rectangle(0,0,820,50);;
 
     public static void initList(Pane parent) {
         gameScene.put(SceneState.PAUSE, new PauseScene());
@@ -310,16 +311,13 @@ public class BombermanGame extends Application {
         camera = new Camera(bomberman);
         // Tao Canvas
         canvas = new Canvas(Sprite.SCALED_SIZE * WIDTH, Sprite.SCALED_SIZE * HEIGHT);
-        gc = canvas.getGraphicsContext2D();
+
 
         // Tao root container
         Pane root = new Pane();
         root.getChildren().add(canvas);
         initList(root);
-        Rectangle rectangle = new Rectangle(0, 0, root.getWidth(), 50);
-        rectangle.setFill(new Color(0f, 0f, 0f, 0.2));
-        Group group = new Group(rectangle);
-        root.getChildren().add(rectangle);
+        gc = canvas.getGraphicsContext2D();
 //
 //        Scene.setOnKeyPressed(event -> {
 //        KeyCode keycode = keyEvent.getCode();
@@ -382,8 +380,7 @@ public class BombermanGame extends Application {
         }
 
 //      Check enemy
-        for (Entity o :
-                entities) {
+        for (Entity o : entities) {
             if (o instanceof Enemy) {
                 ((Enemy) o).checkBomber(bomberman);
                 if (o instanceof Oneal) {
@@ -392,28 +389,39 @@ public class BombermanGame extends Application {
             }
         }
 
+
+
+
         TranslateTransition t = new TranslateTransition(Duration.millis(0.1), canvas);
-        if (bomberman.getX() < 208) {
+        System.out.println(bomberman.getX());
+        if (bomberman.getX() < 400) {
             t.setToX(0);
-        } else if (bomberman.getX() > 800) {
-            t.setToX(-592);
+            rectangle.setX(0);
+        } else if (bomberman.getX() > 1564) {
+            t.setToX(-1167);
+            rectangle.setX(1164);
         } else {
-            t.setToX(16 * 13 - bomberman.getX());
+            t.setToX(400 - bomberman.getX());
+            rectangle.setX(bomberman.getX()-400);
         }
 
         if (bomberman.getY() < 169) {
             t.setToY(0);
+            rectangle.setY(0);
         } else if (bomberman.getY() > 208) {
             t.setToY(-37);
+            rectangle.setY(37);
         } else {
             t.setToY(13 * 13 - bomberman.getY());
+            rectangle.setY(bomberman.getY()-169);
         }
 
         t.setInterpolator(Interpolator.LINEAR);
         t.play();
         stillObjects.forEach(Entity::update);
         bombs.forEach(Entity::update);
-
+        gc.fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
+        gc.setFill(Color.BLUE);
 
     }
 
