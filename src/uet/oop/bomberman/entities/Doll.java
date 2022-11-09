@@ -4,7 +4,7 @@ import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.graphics.Sprite;
 
 public class Doll extends Enemy {
-    private final int velocity = 2;
+    private final int velocity = 2 * Sprite.SCALED;
 
     public Doll(int xUnit, int yUnit) {
         super(xUnit, yUnit);

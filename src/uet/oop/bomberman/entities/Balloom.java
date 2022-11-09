@@ -6,7 +6,7 @@ import uet.oop.bomberman.graphics.Sprite;
 public class Balloom extends Enemy {
 
     MovingDirection randomMove = MovingDirection.LEFT;
-    private final int velocity = 2;
+    private final int velocity = 2 * Sprite.SCALED;
 
     public Balloom(int x, int y) {
         super(x, y);

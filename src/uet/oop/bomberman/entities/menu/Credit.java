@@ -9,11 +9,11 @@ import javafx.scene.text.Text;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.graphics.Sprite;
 
-public class GameOverScene extends SceneManager {
+public class Credit extends SceneManager {
 
-    public GameOverScene() {
+    public Credit() {
         Text textPause = new Text();
-        textPause.setText("GAME OVER");
+        textPause.setText("THANKS FOR PLAYING!\nYOU WIN");
         textPause.setFont(Font.font("Courier New", FontWeight.BOLD, 24 * Sprite.SCALED));
         textPause.setFill(Color.WHITE);
         textPause.setX(Sprite.SCALED_SIZE * 6 - textPause.getLayoutBounds().getWidth()/2);
@@ -33,11 +33,26 @@ public class GameOverScene extends SceneManager {
             BombermanGame.switchState(SceneState.PLAYING);
             BombermanGame.restartGame(BombermanGame.getCurrentLevel());
         });
-        Group textGroup = new Group(textPause, textResume);
+
+        Text textHome = new Text("HOME");
+        textHome.setFont(Font.font("Courier New", FontWeight.BOLD, 24 * Sprite.SCALED));
+        textHome.setFill(Color.WHITE);
+        textHome.setX(Sprite.SCALED_SIZE * 6 - textHome.getLayoutBounds().getWidth()/2);
+        textHome.setY(200 * Sprite.SCALED);
+        textHome.setOnMouseEntered(e -> {
+            textHome.setFill(Color.SKYBLUE);
+        });
+        textHome.setOnMouseExited(e -> {
+            textHome.setFill(Color.WHITE);
+        });
+        textHome.setOnMouseClicked(e -> {
+            BombermanGame.switchState(SceneState.MENU);
+        });
+        Group textGroup = new Group(textPause, textHome);
         super.scene = new Scene(textGroup, Color.BLACK);
     }
 
-    public GameOverScene addHandler() {
+    public Credit addHandler() {
         return this;
     }
 }

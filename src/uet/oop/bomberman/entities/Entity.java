@@ -28,13 +28,13 @@ public abstract class Entity {
      * lấy tọa độ X tọa độ đơn vị
      */
     public int getXUnit() {
-        return (x+Sprite.DEFAULT_SIZE)/Sprite.SCALED_SIZE;
+        return (x+Sprite.SCALED_SIZE/2)/Sprite.SCALED_SIZE;
     }
     /**
      * lấy tọa độ X tọa độ đơn vị
      */
     public int getYUnit() {
-        return (y+Sprite.DEFAULT_SIZE)/Sprite.SCALED_SIZE;
+        return (y+Sprite.SCALED_SIZE/2)/Sprite.SCALED_SIZE;
     }
 
     public boolean isDead() {

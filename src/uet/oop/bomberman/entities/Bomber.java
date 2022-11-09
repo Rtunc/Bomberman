@@ -19,11 +19,11 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
     /**
      * Max tốc độ khi người chơi nhấn giữ
      */
-    private int maxVelocity = 3;
+    private int maxVelocity = 3 * Sprite.SCALED;
     private int numberOfBombs = 1;
     private int flameRadius = 1;
     private int heart = 1;
-    private int velocity = 1;
+    private int velocity = Sprite.SCALED;
     private boolean autocorrecting = false;
     private int deadRecover = 120;
     private boolean withBomb = false;
@@ -256,7 +256,7 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
         if (autocorrecting || inputDirection != null) {
             calculateMove();
         }
-        if (withBomb && lastBombX != 0 && (Math.abs(lastBombX - x) > 32 || Math.abs(lastBombY - y) > 32))
+        if (withBomb && lastBombX != 0 && (Math.abs(lastBombX - x) > Sprite.SCALED_SIZE || Math.abs(lastBombY - y) > Sprite.SCALED_SIZE))
             withBomb = false;
 //
 //        detectPlaceBomb();
@@ -280,6 +280,10 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
     }
 
     int deadImmune = 0;
+
+    public boolean isImmune() {
+        return deadImmune != 0;
+    }
 
     private void bomberDead() {
         if (this.isDead) {
