@@ -22,6 +22,8 @@ public abstract class Enemy extends SetAnimatedEntity implements AliveEntity {
         super(xUnit, yUnit, null);
     }
 
+    protected int point;
+
     /**
      * Mỗi enemy có nước đi khác nhau
      */
@@ -56,6 +58,7 @@ public abstract class Enemy extends SetAnimatedEntity implements AliveEntity {
 
     public void setDead() {
         if (!this.isDead) {
+            BombermanGame.bomberman.increasePoint(point);
             super.setCurrentState(CollisionAction.DEAD);
             super.frame = 0;
             this.isDead = true;

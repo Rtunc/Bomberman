@@ -18,6 +18,7 @@ public class PauseScene extends SceneManager {
         textPause.setFill(Color.WHITE);
         textPause.setX(Sprite.SCALED_SIZE *6 - textPause.getLayoutBounds().getWidth()/2);
         textPause.setY(50 * Sprite.SCALED);
+
         Text textResume = new Text("RESUME");
         textResume.setFont(Font.font("Courier New", FontWeight.BOLD, 24 * Sprite.SCALED));
         textResume.setFill(Color.WHITE);
@@ -32,7 +33,23 @@ public class PauseScene extends SceneManager {
         textResume.setOnMouseExited(e -> {
             textResume.setFill(Color.WHITE);
         });
-        Group textGroup = new Group(textPause, textResume);
+
+        Text textHome = new Text("HOME");
+        textHome.setFont(Font.font("Courier New", FontWeight.BOLD, 24 * Sprite.SCALED));
+        textHome.setFill(Color.WHITE);
+        textHome.setX(Sprite.SCALED_SIZE * 6 - textHome.getLayoutBounds().getWidth()/2);
+        textHome.setY(200 * Sprite.SCALED);
+        textHome.setOnMouseEntered(e -> {
+            textHome.setFill(Color.SKYBLUE);
+        });
+        textHome.setOnMouseExited(e -> {
+            textHome.setFill(Color.WHITE);
+        });
+        textHome.setOnMouseClicked(e -> {
+            BombermanGame.switchState(SceneState.MENU);
+        });
+
+        Group textGroup = new Group(textPause, textResume, textHome);
         super.scene = new Scene(textGroup, Color.BLACK);
     }
 

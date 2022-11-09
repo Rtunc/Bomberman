@@ -4,45 +4,19 @@ import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.bomb.Bomb;
 import uet.oop.bomberman.graphics.Sprite;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.PriorityQueue;
 
 /**
  * Oneal chỉ còn va chạm với bomb, muốn thay đổi gì nhắn lại
  */
 public class Oneal extends Enemy {
-    MovingDirection randomMove = MovingDirection.LEFT;
-    private final int velocity = 2 * Sprite.SCALED;
-
     private static final int WIDE = 10;
     private static final int DIAG = 14;
-
-    private class Node {
-        public Node(int xUnit, int yUnit) {
-            this.xUnit = xUnit;
-            this.yUnit = yUnit;
-        }
-
-        public Node arrow;
-
-        public int xUnit, yUnit;
-        public int fCost, hCost, gCost;
-
-        public void calculateCost(int xStart, int yStart, int xEnd, int yEnd) {
-            int hxStart = xStart;
-            int hyStart = yStart;
-            int oldG = 0;
-            if (arrow != null) {
-                hxStart = arrow.xUnit;
-                hyStart = arrow.yUnit;
-                oldG = arrow.gCost;
-            }
-            this.hCost = Math.min(Math.abs(xEnd - xUnit), Math.abs(yEnd - yUnit))*DIAG
-                    + Math.abs(Math.abs(xEnd - xUnit) - Math.abs(yEnd - yUnit))*WIDE;
-            this.gCost = oldG + Math.min(Math.abs(hxStart - xUnit), Math.abs(hyStart - yUnit))*DIAG
-                    + Math.abs(Math.abs(hxStart - xUnit) - Math.abs(hyStart - yUnit))*WIDE;
-            this.fCost = this.hCost + this.gCost;
-        }
-    }
+    private final int velocity = 2 * Sprite.SCALED;
+    MovingDirection randomMove = MovingDirection.LEFT;
+    private Node nextStep = null;
 
     public Oneal(int x, int y) {
         super(x, y);
@@ -60,10 +34,12 @@ public class Oneal extends Enemy {
         super.addFrame(Sprite.mob_dead1.getFxImage(), CollisionAction.DEAD);
         super.addFrame(Sprite.mob_dead2.getFxImage(), CollisionAction.DEAD);
         super.addFrame(Sprite.mob_dead3.getFxImage(), CollisionAction.DEAD);
+
         super.setCurrentState(MovingDirection.STAND);
+
+        point = 400;
     }
 
-    private Node nextStep = null;
     public void buildTarget(Bomber bomber) {
         nextStep = null;
 
@@ -98,7 +74,7 @@ public class Oneal extends Enemy {
                 break;
             }
 
-            for (int i = -1; i <= 1 ; i++) {
+            for (int i = -1; i <= 1; i++) {
                 for (int j = -1; j <= 1; j++) {
                     if (Math.abs(i) == Math.abs(j)) {
                         continue;
@@ -125,8 +101,8 @@ public class Oneal extends Enemy {
                     }
 
                     Node neighbor = null;
-                    for (Node n:
-                         open) {
+                    for (Node n :
+                            open) {
                         if (n.xUnit == current.xUnit + j && n.yUnit == current.yUnit + i) {
                             neighbor = n;
                             break;
@@ -280,5 +256,31 @@ public class Oneal extends Enemy {
     public void update() {
         super.update();
         calculateMove();
+    }
+
+    private class Node {
+        public Node arrow;
+        public int xUnit, yUnit;
+        public int fCost, hCost, gCost;
+        public Node(int xUnit, int yUnit) {
+            this.xUnit = xUnit;
+            this.yUnit = yUnit;
+        }
+
+        public void calculateCost(int xStart, int yStart, int xEnd, int yEnd) {
+            int hxStart = xStart;
+            int hyStart = yStart;
+            int oldG = 0;
+            if (arrow != null) {
+                hxStart = arrow.xUnit;
+                hyStart = arrow.yUnit;
+                oldG = arrow.gCost;
+            }
+            this.hCost = Math.min(Math.abs(xEnd - xUnit), Math.abs(yEnd - yUnit)) * DIAG
+                    + Math.abs(Math.abs(xEnd - xUnit) - Math.abs(yEnd - yUnit)) * WIDE;
+            this.gCost = oldG + Math.min(Math.abs(hxStart - xUnit), Math.abs(hyStart - yUnit)) * DIAG
+                    + Math.abs(Math.abs(hxStart - xUnit) - Math.abs(hyStart - yUnit)) * WIDE;
+            this.fCost = this.hCost + this.gCost;
+        }
     }
 }
