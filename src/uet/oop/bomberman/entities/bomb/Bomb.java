@@ -129,18 +129,18 @@ public class Bomb extends AnimatedEntity {
               render flame theo 4 hướng trên, dưới, trái, phải
              */
             for (int i = 1; i <= flameLengthTop; i++) {
-                gc.drawImage(i == radius ? topEnd : vertical, super.getX(), super.getY() - i * 32);
+                gc.drawImage(i == radius ? topEnd : vertical, super.getX(), super.getY() - i * Sprite.SCALED_SIZE);
             }
 
             for (int i = 1; i <= flameLengthDown; i++) {
-                gc.drawImage(i == radius ? bottomEnd : vertical, super.getX(), super.getY() + i * 32);
+                gc.drawImage(i == radius ? bottomEnd : vertical, super.getX(), super.getY() + i * Sprite.SCALED_SIZE);
 
             }
             for (int i = 1; i <= flameLengthLeft; i++) {
-                gc.drawImage(i == radius ? leftEnd : horizontal, super.getX() - i * 32, super.getY());
+                gc.drawImage(i == radius ? leftEnd : horizontal, super.getX() - i * Sprite.SCALED_SIZE, super.getY());
             }
             for (int i = 1; i <= flameLengthRight; i++) {
-                gc.drawImage(i == radius ? rightEnd : horizontal, super.getX() + i * 32, super.getY());
+                gc.drawImage(i == radius ? rightEnd : horizontal, super.getX() + i * Sprite.SCALED_SIZE, super.getY());
             }
             updateImageFlames();
         }

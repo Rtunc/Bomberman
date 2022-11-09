@@ -3,6 +3,7 @@ package uet.oop.bomberman.entities;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import uet.oop.bomberman.BombermanGame;
+import uet.oop.bomberman.entities.menu.SceneState;
 import uet.oop.bomberman.graphics.Sprite;
 
 import java.util.List;
@@ -16,18 +17,25 @@ public class Portal extends Entity {
 
     @Override
     public void update() {
-        if (BombermanGame.enemies.size() == 0 && !isOpen) {
-            clearEntity();
-            isOpen = true;
-        }
-        if (isOpen) {
-            checkBomber(BombermanGame.bomberman);
+        if (BombermanGame.state == SceneState.PLAYING) {
+            if (BombermanGame.enemies.size() == 0 && !isOpen) {
+                clearEntity();
+                isOpen = true;
+            }
+            if (isOpen) {
+                checkBomber(BombermanGame.bomberman);
+            }
         }
     }
 
     public void checkBomber(Bomber bomber) {
         if (this.collision(bomber.getX(), bomber.getY())) {
-            BombermanGame.restartGame(1);
+            int win = BombermanGame.setCurrentLevel(BombermanGame.getCurrentLevel() + 1);
+            if (win == 1) {
+                BombermanGame.switchState(SceneState.CREDIT);
+            } else {
+                BombermanGame.switchState(SceneState.NEXTSTAGE);
+            }
         }
     }
 

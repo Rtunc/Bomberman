@@ -11,7 +11,7 @@ import java.util.*;
  */
 public class Oneal extends Enemy {
     MovingDirection randomMove = MovingDirection.LEFT;
-    private final int velocity = 2;
+    private final int velocity = 2 * Sprite.SCALED;
 
     private static final int WIDE = 10;
     private static final int DIAG = 14;
@@ -67,7 +67,7 @@ public class Oneal extends Enemy {
     public void buildTarget(Bomber bomber) {
         nextStep = null;
 
-        if (isCorrecting || bomber.isDead()) {
+        if (isCorrecting || bomber.isDead() || bomber.isImmune()) {
             return;
         }
 

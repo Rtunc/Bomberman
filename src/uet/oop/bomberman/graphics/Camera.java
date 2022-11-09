@@ -17,8 +17,8 @@ public class Camera {
             return;
         }
 
-        offX = target.getX() - 32*31/2;
-        offY = target.getY() - 32*13/2;
+        offX = target.getX() - Sprite.SCALED_SIZE*31/2;
+        offY = target.getY() - Sprite.SCALED_SIZE*13/2;
     }
 
     public float getOffX() {
