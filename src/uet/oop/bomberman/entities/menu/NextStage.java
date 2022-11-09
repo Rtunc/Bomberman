@@ -9,16 +9,16 @@ import javafx.scene.text.Text;
 import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.graphics.Sprite;
 
-public class GameOverScene extends SceneManager {
+public class NextStage extends SceneManager {
 
-    public GameOverScene() {
+    public NextStage() {
         Text textPause = new Text();
-        textPause.setText("GAME OVER");
+        textPause.setText("STAGE " + BombermanGame.currentLevel + " DONE");
         textPause.setFont(Font.font("Courier New", FontWeight.BOLD, 24 * Sprite.SCALED));
         textPause.setFill(Color.WHITE);
         textPause.setX(Sprite.SCALED_SIZE * 6 - textPause.getLayoutBounds().getWidth()/2);
         textPause.setY(50 * Sprite.SCALED);
-        Text textResume = new Text("NEW GAME");
+        Text textResume = new Text("NEXT STAGE");
         textResume.setFont(Font.font("Courier New", FontWeight.BOLD, 24 * Sprite.SCALED));
         textResume.setFill(Color.WHITE);
         textResume.setX(Sprite.SCALED_SIZE * 6 - textResume.getLayoutBounds().getWidth()/2);
@@ -37,7 +37,7 @@ public class GameOverScene extends SceneManager {
         super.scene = new Scene(textGroup, Color.BLACK);
     }
 
-    public GameOverScene addHandler() {
+    public NextStage addHandler() {
         return this;
     }
 }
