@@ -13,6 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.util.Pair;
 import uet.oop.bomberman.entities.*;
 import uet.oop.bomberman.entities.items.AddBomb;
 import uet.oop.bomberman.entities.items.AddFlame;
@@ -41,7 +42,7 @@ public class BombermanGame extends Application {
 
     public static int currentLevel;
 
-    public static int MAX_LEVEL = 1;
+    public static int MAX_LEVEL = 2;
 
     public static int getCurrentLevel() {
         return currentLevel;
@@ -68,10 +69,31 @@ public class BombermanGame extends Application {
     public static void initList(Pane parent) {
         gameScene.put(SceneState.PAUSE, new PauseScene());
         gameScene.put(SceneState.PLAYING, new GameScene(parent).addHandler(bomberman));
-        gameScene.put(SceneState.GAMEOVER, new GameOverScene());
-        gameScene.put(SceneState.NEXTSTAGE, new NextStage());
-        gameScene.put(SceneState.CREDIT, new Credit());
+        gameScene.put(SceneState.GAMEOVER, GameOverScene.GAMEOVERSCENE);
+        gameScene.put(SceneState.NEXTSTAGE, NextStage.NEXTSTAGE);
+        gameScene.put(SceneState.CREDIT, Credit.CREDITSCENE);
         gameScene.put(SceneState.MENU, new Menu());
+        gameScene.put(SceneState.HIGHSCORE, HighScore.HIGHSCOREPANEL);
+        gameScene.put(SceneState.NAMEINPUT, NameInput.NAMEINPUTSCENE);
+    }
+
+    public static void continueGame() {
+        Pair<Pair<String, Integer>, Integer> save = Highscore.getInstance().returnSave();
+        if (save == null) {
+            restartGame(1);
+            bomberman.resetPoint();
+            saveGame();
+            return;
+        }
+        int level = save.getValue();
+        restartGame(level);
+        bomberman.setName(save.getKey().getKey());
+        bomberman.increasePoint(save.getKey().getValue());
+        saveGame();
+    }
+
+    public static void saveGame() {
+        Highscore.getInstance().addSave(bomberman.getName(), bomberman.getPoint(), currentLevel);
     }
 
     public static void restartGame(int level) {
@@ -92,7 +114,6 @@ public class BombermanGame extends Application {
     }
 
     public static void main(String[] args) {
-
         Application.launch(BombermanGame.class);
     }
 
@@ -349,9 +370,11 @@ public class BombermanGame extends Application {
         timer.start();
     }
 
+
     public void update() {
-        if (BombermanGame.gameOver) {
-            BombermanGame.switchState(SceneState.GAMEOVER);
+        if (BombermanGame.gameOver && state == SceneState.PLAYING) {
+            NameInput.NAMEINPUTSCENE.update();
+            BombermanGame.switchState(SceneState.NAMEINPUT);
         }
         entities.forEach(Entity::update);
 //        System.out.println(bomberman.getX());
@@ -393,7 +416,7 @@ public class BombermanGame extends Application {
 
 
         TranslateTransition t = new TranslateTransition(Duration.millis(0.1), canvas);
-        System.out.println(bomberman.getX());
+//        System.out.println(bomberman.getX());
         if (bomberman.getX() < 400) {
             t.setToX(0);
             rectangle.setX(0);

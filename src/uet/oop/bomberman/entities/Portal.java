@@ -3,6 +3,9 @@ package uet.oop.bomberman.entities;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import uet.oop.bomberman.BombermanGame;
+import uet.oop.bomberman.entities.menu.Credit;
+import uet.oop.bomberman.entities.menu.NameInput;
+import uet.oop.bomberman.entities.menu.NextStage;
 import uet.oop.bomberman.entities.menu.SceneState;
 import uet.oop.bomberman.graphics.Sprite;
 
@@ -33,8 +36,10 @@ public class Portal extends Entity {
             bomber.increasePoint(1000);
             int win = BombermanGame.setCurrentLevel(BombermanGame.getCurrentLevel() + 1);
             if (win == 1) {
-                BombermanGame.switchState(SceneState.CREDIT);
+                NameInput.NAMEINPUTSCENE.update();
+                BombermanGame.switchState(SceneState.NAMEINPUT);
             } else {
+                NextStage.NEXTSTAGE.update();
                 BombermanGame.switchState(SceneState.NEXTSTAGE);
             }
         }

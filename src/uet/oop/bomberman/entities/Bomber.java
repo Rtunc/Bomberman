@@ -6,6 +6,7 @@ import uet.oop.bomberman.BombermanGame;
 import uet.oop.bomberman.entities.bomb.Bomb;
 import uet.oop.bomberman.entities.menu.SceneState;
 import uet.oop.bomberman.graphics.Sprite;
+
 import java.io.File;
 
 /**
@@ -16,16 +17,9 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
      * Hướng nhập từ người chơi
      */
     public MovingDirection inputDirection;
-
-    public int getPoint() {
-        return point;
-    }
-
-    public void increasePoint(int point) {
-        this.point += point;
-    }
-
-    private int point = 0;
+    int deadImmune = 0;
+    private String name = "";
+    private static int point = 0;
     /**
      * Max tốc độ khi người chơi nhấn giữ
      */
@@ -39,7 +33,6 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
     private boolean withBomb = false;
     private int lastBombX = 0;
     private int lastBombY = 0;
-
     /**
      * Khởi tạo Bomber với tập hình ảnh.
      *
@@ -73,11 +66,32 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
 
         super.setCurrentState(MovingDirection.STAND);
     }
+
     /**
      * Chỉ cho debug, không hiệu ứng
      */
     public Bomber(int xUnit, int yUnit, Image img) {
         super(xUnit, yUnit, img);
+    }
+
+    public void resetPoint() {
+        this.point = 0;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getPoint() {
+        return point;
+    }
+
+    public void increasePoint(int point) {
+        this.point += point;
     }
 
     public int getFlameRadius() {
@@ -245,8 +259,8 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
         if (numberOfBombs >= 1) {
             for (Entity e :
                     BombermanGame.enemies) {
-                    if (e.collision(this.getXUnit() * Sprite.SCALED_SIZE, this.getYUnit() * Sprite.SCALED_SIZE)) {
-                        return;
+                if (e.collision(this.getXUnit() * Sprite.SCALED_SIZE, this.getYUnit() * Sprite.SCALED_SIZE)) {
+                    return;
                 }
             }
             Bomb b = new Bomb(this.getXUnit(), this.getYUnit(), flameRadius);
@@ -288,8 +302,6 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
             System.out.println("bomb ded");
         }
     }
-
-    int deadImmune = 0;
 
     public boolean isImmune() {
         return deadImmune != 0;

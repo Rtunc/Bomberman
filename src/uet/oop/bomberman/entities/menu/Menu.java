@@ -8,6 +8,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import uet.oop.bomberman.BombermanGame;
+import uet.oop.bomberman.Highscore;
 import uet.oop.bomberman.graphics.Sprite;
 
 public class Menu extends SceneManager {
@@ -32,7 +33,10 @@ public class Menu extends SceneManager {
         });
         textResume.setOnMouseClicked(e -> {
             BombermanGame.switchState(SceneState.PLAYING);
-            BombermanGame.restartGame(BombermanGame.getCurrentLevel());
+            Highscore.getInstance().returnSave();
+            BombermanGame.restartGame(BombermanGame.setCurrentLevel(1));
+            BombermanGame.bomberman.resetPoint();
+            BombermanGame.saveGame();
         });
 
         Text aContinue = new Text("CONTINUE");
@@ -48,14 +52,30 @@ public class Menu extends SceneManager {
         });
         aContinue.setOnMouseClicked(e -> {
             BombermanGame.switchState(SceneState.PLAYING);
-            BombermanGame.restartGame(BombermanGame.getCurrentLevel());
+            BombermanGame.continueGame();
+        });
+
+        Text aHighScore = new Text("HIGH SCORE");
+        aHighScore.setFont(Font.font("Courier New", FontWeight.BOLD, 24 * Sprite.SCALED));
+        aHighScore.setFill(Color.WHITE);
+        aHighScore.setX(Sprite.SCALED_SIZE * 6 - aHighScore.getLayoutBounds().getWidth()/2);
+        aHighScore.setY(250 * Sprite.SCALED);
+        aHighScore.setOnMouseEntered(e -> {
+            aHighScore.setFill(Color.SKYBLUE);
+        });
+        aHighScore.setOnMouseExited(e -> {
+            aHighScore.setFill(Color.WHITE);
+        });
+        aHighScore.setOnMouseClicked(e -> {
+            HighScore.HIGHSCOREPANEL.updateList();
+            BombermanGame.switchState(SceneState.HIGHSCORE);
         });
 
         Text textQuit = new Text("QUIT");
         textQuit.setFont(Font.font("Courier New", FontWeight.BOLD, 24 * Sprite.SCALED));
         textQuit.setFill(Color.WHITE);
         textQuit.setX(Sprite.SCALED_SIZE * 6 - textQuit.getLayoutBounds().getWidth()/2);
-        textQuit.setY(250 * Sprite.SCALED);
+        textQuit.setY(350 * Sprite.SCALED);
         textQuit.setOnMouseEntered(e -> {
             textQuit.setFill(Color.SKYBLUE);
         });
@@ -65,7 +85,7 @@ public class Menu extends SceneManager {
         textQuit.setOnMouseClicked(e -> {
             Platform.exit();
         });
-        Group textGroup = new Group(textPause, aContinue, textQuit, textResume);
+        Group textGroup = new Group(textPause, aHighScore, textQuit, textResume, aContinue);
         super.scene = new Scene(textGroup, Color.BLACK);
     }
 
