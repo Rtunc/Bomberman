@@ -30,6 +30,7 @@ public class Portal extends Entity {
 
     public void checkBomber(Bomber bomber) {
         if (this.collision(bomber.getX(), bomber.getY())) {
+            bomber.increasePoint(1000);
             int win = BombermanGame.setCurrentLevel(BombermanGame.getCurrentLevel() + 1);
             if (win == 1) {
                 BombermanGame.switchState(SceneState.CREDIT);

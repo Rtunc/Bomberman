@@ -25,6 +25,8 @@ public class Doll extends Enemy {
 
         super.setCurrentState(MovingDirection.STAND);
         unitDirection = MovingDirection.RIGHT;
+
+        point = 200;
     }
 
     @Override

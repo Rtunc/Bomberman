@@ -16,6 +16,16 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
      * Hướng nhập từ người chơi
      */
     public MovingDirection inputDirection;
+
+    public int getPoint() {
+        return point;
+    }
+
+    public void increasePoint(int point) {
+        this.point += point;
+    }
+
+    private int point = 0;
     /**
      * Max tốc độ khi người chơi nhấn giữ
      */
