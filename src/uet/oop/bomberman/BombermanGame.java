@@ -396,6 +396,13 @@ public class BombermanGame extends Application {
 
 
     public void update(Pane root) {
+        root.getChildren().remove(textStage);
+        textStage.setText("STAGE " + currentLevel);
+        textStage.setFont(Font.font("Courier New", FontWeight.BOLD, 24 * Sprite.SCALED));
+        textStage.setFill(Color.WHITE);
+        textStage.setX(Sprite.SCALED_SIZE * 6 - textStage.getLayoutBounds().getWidth()/2);
+        textStage.setY(50 * Sprite.SCALED);
+        root.getChildren().add(textStage);
         if (bomberman.isDead()){
             System.out.println("ok");
             root.getChildren().remove(imageView_i);
