@@ -134,6 +134,10 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
         this.numberOfBombs++;
     }
 
+    public int getDeadRecover() {
+        return deadRecover;
+    }
+
     /**
      * Nhả tốc độ
      */

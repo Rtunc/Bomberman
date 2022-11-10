@@ -7,10 +7,15 @@ import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.Pair;
@@ -23,9 +28,7 @@ import uet.oop.bomberman.entities.menu.*;
 import uet.oop.bomberman.graphics.Camera;
 import uet.oop.bomberman.graphics.Sprite;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.Reader;
+import java.io.*;
 import java.util.*;
 
 
@@ -43,6 +46,15 @@ public class BombermanGame extends Application {
     public static int currentLevel;
 
     public static int MAX_LEVEL = 2;
+    private Image hp_i = new Image(new FileInputStream("res/textures/Bar_i.png"), 153, 0, true, true);
+    private ImageView imageView_i = new ImageView();
+    private Image hp_o = new Image(new FileInputStream("res/textures/Em.png"),200, 0, true, true);
+    private ImageView imageView_o = new ImageView();
+    private Text textStage = new Text();
+    private double barX=0, barY=0;
+
+    public BombermanGame() throws FileNotFoundException {
+    }
 
     public static int getCurrentLevel() {
         return currentLevel;
@@ -332,11 +344,23 @@ public class BombermanGame extends Application {
         camera = new Camera(bomberman);
         // Tao Canvas
         canvas = new Canvas(Sprite.SCALED_SIZE * WIDTH, Sprite.SCALED_SIZE * HEIGHT);
-
+        imageView_i.setX(36.2);
+        imageView_i.setY(17.67);
+        imageView_i.setImage(hp_i);
+        imageView_i.setFitWidth(153);
+        imageView_o.setImage(hp_o);
+        textStage.setText("STAGE " + currentLevel);
+        textStage.setFont(Font.font("Courier New", FontWeight.BOLD, 24 * Sprite.SCALED));
+        textStage.setFill(Color.WHITE);
+        textStage.setX(Sprite.SCALED_SIZE * 6 - textStage.getLayoutBounds().getWidth()/2);
+        textStage.setY(50 * Sprite.SCALED);
 
         // Tao root container
         Pane root = new Pane();
         root.getChildren().add(canvas);
+        root.getChildren().add(imageView_i);
+        root.getChildren().add(imageView_o);
+        root.getChildren().add(textStage);
         initList(root);
         gc = canvas.getGraphicsContext2D();
 //
@@ -360,7 +384,7 @@ public class BombermanGame extends Application {
 //                    ((GameScene) thisState).addHandler(bomberman);
                 }
                 stage.setScene(thisState.getScene());
-                update();
+                update(root);
                 if (lastUpdate > 0) {
                     fps = (double) 1 / ((l - lastUpdate) * 1e-9);
                 }
@@ -371,7 +395,17 @@ public class BombermanGame extends Application {
     }
 
 
-    public void update() {
+    public void update(Pane root) {
+        if (bomberman.isDead()){
+            System.out.println("ok");
+            root.getChildren().remove(imageView_i);
+            root.getChildren().remove(imageView_o);
+            imageView_i.setX(36.2);
+            imageView_i.setY(17.67);
+            imageView_i.setFitWidth(imageView_i.getFitWidth() - 76.5/120.0);
+            root.getChildren().add(imageView_i);
+            root.getChildren().add(imageView_o);
+        }
         if (BombermanGame.gameOver && state == SceneState.PLAYING) {
             NameInput.NAMEINPUTSCENE.update();
             BombermanGame.switchState(SceneState.NAMEINPUT);
