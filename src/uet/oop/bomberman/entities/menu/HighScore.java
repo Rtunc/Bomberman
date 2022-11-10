@@ -23,6 +23,9 @@ public class HighScore extends SceneManager {
         Group temp = new Group();
         super.scene.setRoot(temp);
         highScore = Highscore.getInstance().getHighScore();
+        if (highScore == null) {
+            return;
+        }
         for (int i = 0; i < highScore.size(); i++) {
             Text textScore = new Text();
             textScore.setText(highScore.get(i).getKey() + " - " + highScore.get(i).getValue());

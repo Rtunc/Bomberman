@@ -1,5 +1,6 @@
 package uet.oop.bomberman;
 
+import com.mysql.cj.jdbc.exceptions.CommunicationsException;
 import javafx.util.Pair;
 
 import java.io.BufferedReader;
@@ -15,7 +16,7 @@ public class Highscore {
 
     private Highscore() {
         try {
-            String DB_URL = "jdbc:mysql://localhost:3306/";
+            String DB_URL = "jdbc:mysql://127.0.0.1:3306/";
             String USER_NAME = "bombermangame";
             String PASSWORD = "BomberMan";
             connection = getConnection(DB_URL, USER_NAME, PASSWORD);
@@ -80,6 +81,7 @@ public class Highscore {
             rs.close();
             return highScore;
         } catch (Exception ex) {
+            ex.printStackTrace();
             return null;
         }
     }
