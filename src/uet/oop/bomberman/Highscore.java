@@ -1,6 +1,7 @@
 package uet.oop.bomberman;
 
 import com.mysql.cj.jdbc.exceptions.CommunicationsException;
+import javafx.application.Platform;
 import javafx.util.Pair;
 
 import java.io.BufferedReader;
@@ -14,17 +15,21 @@ public class Highscore {
 
     private Connection connection = null;
 
+    String DB_URL = "jdbc:mysql://127.0.0.1:3306/";
+    String USER_NAME = "bombermangame";
+    String PASSWORD = "BomberMan";
+
     private Highscore() {
         try {
-            String DB_URL = "jdbc:mysql://127.0.0.1:3306/";
-            String USER_NAME = "bombermangame";
-            String PASSWORD = "BomberMan";
             connection = getConnection(DB_URL, USER_NAME, PASSWORD);
             statement = connection.createStatement();
         } catch (Exception ex) {
             ex.printStackTrace();
+            reConnection();
         }
     }
+
+    private int reconnectCount = 0;
 
     private static final Highscore highScore = new Highscore();
 
@@ -32,9 +37,20 @@ public class Highscore {
         return highScore;
     }
 
-    public void closeConnection() {
+    public void reConnection() {
         try {
-            connection.close();
+            if (reconnectCount > 10) {
+                if (!connection.isClosed()) {
+                    connection.close();
+                }
+                Platform.exit();
+            }
+            if (!connection.isClosed()) {
+                connection.close();
+            }
+            connection = getConnection(DB_URL, USER_NAME, PASSWORD);
+            statement = connection.createStatement();
+            reconnectCount++;
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -82,7 +98,8 @@ public class Highscore {
             return highScore;
         } catch (Exception ex) {
             ex.printStackTrace();
-            return null;
+            reConnection();
+            return getHighScore();
         }
     }
 
@@ -97,6 +114,8 @@ public class Highscore {
                     ", " + score + ");");
         } catch (Exception ex) {
             ex.printStackTrace();
+            reConnection();
+            addScore(name, score);
         }
     }
 
@@ -111,6 +130,8 @@ public class Highscore {
                     ", " + score + "," + level + ");");
         } catch (Exception ex) {
             ex.printStackTrace();
+            reConnection();
+            addSave(name, score, level);
         }
     }
 
@@ -126,7 +147,8 @@ public class Highscore {
             return save;
         } catch (Exception ex) {
             ex.printStackTrace();
-            return null;
+            reConnection();
+            return returnSave();
         }
     }
 }
