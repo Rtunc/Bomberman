@@ -477,8 +477,6 @@ public class BombermanGame extends Application {
         t.play();
         stillObjects.forEach(Entity::update);
         bombs.forEach(Entity::update);
-        gc.fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
-        gc.setFill(Color.BLUE);
 
     }
 
