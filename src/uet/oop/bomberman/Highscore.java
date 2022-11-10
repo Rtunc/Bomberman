@@ -1,6 +1,6 @@
 package uet.oop.bomberman;
 
-import com.mysql.cj.jdbc.exceptions.CommunicationsException;
+//import com.mysql.cj.jdbc.exceptions.CommunicationsException;
 import javafx.application.Platform;
 import javafx.util.Pair;
 
@@ -15,9 +15,9 @@ public class Highscore {
 
     private Connection connection = null;
 
-    String DB_URL = "jdbc:mysql://127.0.0.1:3306/";
-    String USER_NAME = "bombermangame";
-    String PASSWORD = "BomberMan";
+    String DB_URL = "jdbc:mysql://127.0.0.1:3307/";
+    String USER_NAME = "root";
+    String PASSWORD = "12345678";
 
     private Highscore() {
         try {

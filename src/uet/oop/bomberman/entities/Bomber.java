@@ -66,7 +66,7 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
 
         super.setCurrentState(MovingDirection.STAND);
     }
-
+    
     /**
      * Chỉ cho debug, không hiệu ứng
      */
