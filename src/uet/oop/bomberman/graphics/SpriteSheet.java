@@ -18,7 +18,7 @@ public class SpriteSheet {
 	public int[] _pixels;
 	public BufferedImage image;
 
-	public static SpriteSheet tiles = BombermanGame.currentLevel%2!=0?new SpriteSheet("/textures/classic.png", 256):new SpriteSheet("/textures/classic2.png", 256);
+	public static SpriteSheet tiles = BombermanGame.currentLevel%2==0?new SpriteSheet("/textures/classic.png", 256):new SpriteSheet("/textures/classic2.png", 256);
 	
 	public SpriteSheet(String path, int size) {
 		_path = path;

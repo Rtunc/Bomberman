@@ -27,12 +27,14 @@ import uet.oop.bomberman.entities.items.SpeedUp;
 import uet.oop.bomberman.entities.menu.*;
 import uet.oop.bomberman.graphics.Camera;
 import uet.oop.bomberman.graphics.Sprite;
+import uet.oop.bomberman.graphics.SpriteSheet;
 
 import java.io.*;
 import java.util.*;
 
 
 public class BombermanGame extends Application {
+    public static final int DEFAULT_SIZE = 16;
     public static final Map<SceneState, SceneManager> gameScene = new HashMap<>();
     public static final List<Entity> entities = new ArrayList<>();
     public static final List<Enemy> enemies = new ArrayList<>();
@@ -43,7 +45,7 @@ public class BombermanGame extends Application {
     public static int HEIGHT;
     public static double fps;
 
-    public static int currentLevel;
+    public static int currentLevel=1;
 
     public static int MAX_LEVEL = 2;
     private Image hp_i = new Image(new FileInputStream("res/textures/Bar_i.png"), 153, 0, true, true);
@@ -123,6 +125,19 @@ public class BombermanGame extends Application {
 
     public static void switchState(SceneState state) {
         BombermanGame.state = state;
+
+
+    }
+
+    public static void updateSprite(){
+        SpriteSheet.tiles= BombermanGame.currentLevel%2==0?new SpriteSheet("/textures/classic.png", 256):new SpriteSheet("/textures/classic2.png", 256);
+        Sprite.grass = new Sprite(DEFAULT_SIZE, 6, 0, SpriteSheet.tiles, 16, 16);
+       Sprite.brick = new Sprite(DEFAULT_SIZE, 7, 0, SpriteSheet.tiles, 16, 16);
+        Sprite.wall = new Sprite(DEFAULT_SIZE, 5, 0, SpriteSheet.tiles, 16, 16);
+       Sprite.portal = new Sprite(DEFAULT_SIZE, 4, 0, SpriteSheet.tiles, 14, 14);
+        Sprite.brick_exploded = new Sprite(DEFAULT_SIZE, 7, 1, SpriteSheet.tiles, 16, 16);
+        Sprite.brick_exploded1 = new Sprite(DEFAULT_SIZE, 7, 2, SpriteSheet.tiles, 16, 16);
+        Sprite.brick_exploded2 = new Sprite(DEFAULT_SIZE, 7, 3, SpriteSheet.tiles, 16, 16);
     }
 
     public static void main(String[] args) {
@@ -238,6 +253,7 @@ public class BombermanGame extends Application {
     }
 
     public static void createEntities() {
+        updateSprite();
         for (int i = 0; i < HEIGHT; i++) {
 
             for (int j = 0; j < WIDTH; j++) {

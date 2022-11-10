@@ -1,5 +1,6 @@
 package uet.oop.bomberman.entities;
 
+import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.paint.Color;
 import uet.oop.bomberman.BombermanGame;
@@ -56,7 +57,12 @@ public class Portal extends Entity {
             }
         }
         WritableImage image = new WritableImage(Sprite.SCALED_SIZE, Sprite.SCALED_SIZE);
-        image.getPixelWriter().setColor(0, 0, Color.BLACK);
+        PixelWriter pixelWriter = image.getPixelWriter();
+        for (int i = 0; i < image.getWidth(); i++) {
+            for (int j = 0; j < image.getHeight(); j++) {
+                pixelWriter.setColor(i, j, Color.BLACK);
+            }
+        }
         this.img = image;
     }
 }

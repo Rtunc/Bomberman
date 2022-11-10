@@ -172,6 +172,12 @@ public class Bomb extends AnimatedEntity {
     }
 
     private void checkEnitiies() {
+        List<Entity> entityMidList = BombermanGame.FindList(this.getXUnit(), this.getYUnit(), BombermanGame.entities);
+        for (Entity enemy : entityMidList) {
+            if (enemy instanceof AliveEntity) {
+                ((AliveEntity) enemy).setDead();
+            }
+        }
         for (int i = 1; i <= flameLengthTop; i++) {
             List<Entity> checkList = BombermanGame.FindList(this.getXUnit(), this.getYUnit() - i, BombermanGame.stillObjects);
             List<Entity> entityList = BombermanGame.FindList(this.getXUnit(), this.getYUnit() - i, BombermanGame.entities);

@@ -24,7 +24,7 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
      * Max tốc độ khi người chơi nhấn giữ
      */
     private int maxVelocity = 3 * Sprite.SCALED;
-    private int numberOfBombs = 1;
+    private int numberOfBombs = 2;
     private int flameRadius = 1;
     private int heart = 1;
     private int velocity = Sprite.SCALED;
@@ -266,6 +266,9 @@ public class Bomber extends SetAnimatedEntity implements AliveEntity {
                 if (e.collision(this.getXUnit() * Sprite.SCALED_SIZE, this.getYUnit() * Sprite.SCALED_SIZE)) {
                     return;
                 }
+            }
+            if (BombermanGame.getBomb(this.getX(), this.getY()) != null) {
+                return;
             }
             Bomb b = new Bomb(this.getXUnit(), this.getYUnit(), flameRadius);
             BombermanGame.bombs.add(b);

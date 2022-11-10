@@ -1,6 +1,7 @@
 package uet.oop.bomberman.graphics;
 
 import javafx.scene.image.*;
+import uet.oop.bomberman.BombermanGame;
 
 import java.awt.image.BufferedImage;
 import java.nio.IntBuffer;
@@ -9,7 +10,6 @@ import java.nio.IntBuffer;
  * Lưu trữ thông tin các pixel của 1 sprite (hình ảnh game)
  */
 public class Sprite {
-
     public static final int DEFAULT_SIZE = 16;
     public static final int SCALED_SIZE = DEFAULT_SIZE * 4;
 
@@ -132,6 +132,8 @@ public class Sprite {
     public static Sprite bomb_1 = new Sprite(DEFAULT_SIZE, 1, 3, SpriteSheet.tiles, 13, 15);
     public static Sprite bomb_2 = new Sprite(DEFAULT_SIZE, 2, 3, SpriteSheet.tiles, 12, 14);
 
+    public static Sprite bomb_3 = new Sprite(DEFAULT_SIZE, 3, 3, SpriteSheet.tiles, 12, 14);
+
     /*
     |--------------------------------------------------------------------------
     | FlameSegment Sprites
@@ -228,29 +230,21 @@ public class Sprite {
             return x1;
         }
         else return x2;
-
-//        if (calc / time == 0) {
-//            if (calc < diff) {
-//                return normal;
-//            }
-//
-//            if (calc < diff * 2) {
-//                return x1;
-//            }
-//            return x2;
-//        } else {
-//            if (calc < diff) {
-//                return x2;
-//            }
-//
-//            if (calc < diff * 2) {
-//                return x1;
-//            }
-//            return normal;
-//
-//        }
     }
+    public static Sprite movingSprite4(Sprite normal, Sprite x1, Sprite x2, Sprite x3, int animate, int time) {
+        int diff= (animate/time)%4 ;
 
+        if(diff==0) {
+            return normal;
+        }
+        else if( diff==1 ) {
+            return x1;
+        }
+        if(diff==2) {
+            return x2;
+        }
+        else return x3;
+    }
     public static Sprite movingSprite(Sprite x1, Sprite x2, int animate, int time) {
         int diff = time / 2;
         return (animate % time > diff) ? x1 : x2;
